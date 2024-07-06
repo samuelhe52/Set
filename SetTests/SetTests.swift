@@ -19,7 +19,7 @@ final class SetTests: XCTestCase {
     }
 
     func testExample() throws {
-        let testCard = SetGameCard(shape: .diamond, number: .one, shading: .striped)
+        let testCard = SetCard(shape: .diamond, number: .one, shading: .striped)
         
         print(testCard)
     }

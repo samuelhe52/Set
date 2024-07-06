@@ -1,6 +1,6 @@
 //
 //  BrightnessGradient.swift
-//  Memorize
+//  Set
 //
 //  Created by Samuel He on 2024/6/10.
 //

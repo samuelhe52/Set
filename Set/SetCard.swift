@@ -1,5 +1,5 @@
 //
-//  SetGameCard.swift
+//  SetCard.swift
 //  Set
 //
 //  Created by Samuel He on 2024/7/6.
@@ -8,11 +8,11 @@
 import Foundation
 import SwiftUI
 
-struct SetGameCard: Identifiable, CustomStringConvertible {
+struct SetCard: Identifiable, CustomStringConvertible {
     // card properties declaration
-    var shape: SetCardShapes
-    var number: SetCardShapeNumbers
-    var shading: SetCardShadings
+    private(set) var shape: Shapes
+    private(set) var number: ShapeCount
+    private(set) var shading: Shadings
     
     var selected: Bool = false
     
@@ -21,7 +21,7 @@ struct SetGameCard: Identifiable, CustomStringConvertible {
     
     // MARK: - Enumerations for card properties
     
-    enum SetCardShapes: CustomStringConvertible, CaseIterable {
+    enum Shapes: CustomStringConvertible, CaseIterable {
         case diamond, squiggle, oval
         
         var description: String {
@@ -36,11 +36,11 @@ struct SetGameCard: Identifiable, CustomStringConvertible {
         }
     }
 
-    enum SetCardShapeNumbers: Int, CaseIterable {
+    enum ShapeCount: Int, CaseIterable {
         case one = 1, two, three
     }
 
-    enum SetCardShadings: CustomStringConvertible, CaseIterable {
+    enum Shadings: CustomStringConvertible, CaseIterable {
         case solid, striped, open
         
         var description: String {
