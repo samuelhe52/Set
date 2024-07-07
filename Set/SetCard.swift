@@ -13,15 +13,16 @@ struct SetCard: Identifiable, CustomStringConvertible {
     private(set) var shape: Shapes
     private(set) var shapeCount: ShapeCount
     private(set) var shading: Shadings
+    private(set) var color: CardColor
     
     var selected: Bool = false
     
     var id: UUID = UUID()
-    var description: String { "A card with \(number.rawValue) \(shading.description) \(shape.description)(s)" }
+    var description: String { "A card with \(shapeCount.rawValue) \(color.description) \(shading.description) \(shape.description)(s)" }
     
     // MARK: - Enumerations for card properties
     
-    enum Shapes: CustomStringConvertible, CaseIterable {
+    enum Shapes: CustomStringConvertible, CaseIterable, Identifiable {
         case diamond, squiggle, oval
         
         var description: String {
@@ -34,6 +35,8 @@ struct SetCard: Identifiable, CustomStringConvertible {
                 return "oval"
             }
         }
+        
+        var id: String { self.description }
     }
 
     enum ShapeCount: Int, CaseIterable {
@@ -51,6 +54,21 @@ struct SetCard: Identifiable, CustomStringConvertible {
                 return "striped"
             case .open:
                 return "open"
+            }
+        }
+    }
+    
+    enum CardColor: CustomStringConvertible, CaseIterable {
+        case purple, pink, blue
+        
+        var description: String {
+            switch self {
+            case .purple:
+                return "purple"
+            case .pink:
+                return "green"
+            case .blue:
+                return "blue"
             }
         }
     }
