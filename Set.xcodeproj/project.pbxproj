@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F04A3A42C39604200EB4DE6 /* SetShapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F04A3A32C39604200EB4DE6 /* SetShapes.swift */; };
+		9F04A3A42C39604200EB4DE6 /* SetShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F04A3A32C39604200EB4DE6 /* SetShape.swift */; };
 		9F04A3A62C39735300EB4DE6 /* BrightnessGradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F04A3A52C39735300EB4DE6 /* BrightnessGradient.swift */; };
 		9F04A3A82C3993AF00EB4DE6 /* SetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F04A3A72C3993AF00EB4DE6 /* SetCard.swift */; };
 		9F04A3BF2C39989000EB4DE6 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F04A3BE2C39989000EB4DE6 /* SetGame.swift */; };
+		9F1850052C399DFF001AAD49 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1850042C399DFF001AAD49 /* CardView.swift */; };
 		9F7057442C3152E60068EC81 /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7057432C3152E60068EC81 /* SetApp.swift */; };
 		9F7057462C3152E60068EC81 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7057452C3152E60068EC81 /* ContentView.swift */; };
 		9F7057482C3152E70068EC81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F7057472C3152E70068EC81 /* Assets.xcassets */; };
@@ -38,10 +39,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		9F04A3A32C39604200EB4DE6 /* SetShapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetShapes.swift; sourceTree = "<group>"; };
+		9F04A3A32C39604200EB4DE6 /* SetShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetShape.swift; sourceTree = "<group>"; };
 		9F04A3A52C39735300EB4DE6 /* BrightnessGradient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrightnessGradient.swift; sourceTree = "<group>"; };
 		9F04A3A72C3993AF00EB4DE6 /* SetCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCard.swift; sourceTree = "<group>"; };
 		9F04A3BE2C39989000EB4DE6 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
+		9F1850042C399DFF001AAD49 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		9F7057402C3152E60068EC81 /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F7057432C3152E60068EC81 /* SetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetApp.swift; sourceTree = "<group>"; };
 		9F7057452C3152E60068EC81 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -106,9 +108,10 @@
 				9F7057432C3152E60068EC81 /* SetApp.swift */,
 				9F04A3A52C39735300EB4DE6 /* BrightnessGradient.swift */,
 				9F7057452C3152E60068EC81 /* ContentView.swift */,
-				9F04A3A32C39604200EB4DE6 /* SetShapes.swift */,
-				9F04A3A72C3993AF00EB4DE6 /* SetCard.swift */,
+				9F04A3A32C39604200EB4DE6 /* SetShape.swift */,
 				9F04A3BE2C39989000EB4DE6 /* SetGame.swift */,
+				9F04A3A72C3993AF00EB4DE6 /* SetCard.swift */,
+				9F1850042C399DFF001AAD49 /* CardView.swift */,
 				9F7057472C3152E70068EC81 /* Assets.xcassets */,
 				9F7057492C3152E70068EC81 /* Set.entitlements */,
 				9F70574A2C3152E70068EC81 /* Preview Content */,
@@ -273,7 +276,8 @@
 			files = (
 				9F7057462C3152E60068EC81 /* ContentView.swift in Sources */,
 				9F04A3A82C3993AF00EB4DE6 /* SetCard.swift in Sources */,
-				9F04A3A42C39604200EB4DE6 /* SetShapes.swift in Sources */,
+				9F1850052C399DFF001AAD49 /* CardView.swift in Sources */,
+				9F04A3A42C39604200EB4DE6 /* SetShape.swift in Sources */,
 				9F04A3A62C39735300EB4DE6 /* BrightnessGradient.swift in Sources */,
 				9F04A3BF2C39989000EB4DE6 /* SetGame.swift in Sources */,
 				9F7057442C3152E60068EC81 /* SetApp.swift in Sources */,
@@ -450,7 +454,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -489,7 +493,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;

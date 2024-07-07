@@ -11,7 +11,7 @@ import SwiftUI
 struct SetCard: Identifiable, CustomStringConvertible {
     // card properties declaration
     private(set) var shape: Shapes
-    private(set) var number: ShapeCount
+    private(set) var shapeCount: ShapeCount
     private(set) var shading: Shadings
     
     var selected: Bool = false
