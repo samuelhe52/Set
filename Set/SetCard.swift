@@ -27,12 +27,9 @@ struct SetCard: Identifiable, CustomStringConvertible {
         
         var description: String {
             switch self {
-            case .diamond:
-                return "diamond"
-            case .squiggle:
-                return "squiggle"
-            case .oval:
-                return "oval"
+            case .diamond: "diamond"
+            case .squiggle: "squiggle"
+            case .oval: "oval"
             }
         }
         
@@ -48,12 +45,9 @@ struct SetCard: Identifiable, CustomStringConvertible {
         
         var description: String {
             switch self {
-            case .solid:
-                return "solid"
-            case .striped:
-                return "striped"
-            case .open:
-                return "open"
+            case .solid: "solid"
+            case .striped: "striped"
+            case .open: "open"
             }
         }
     }
@@ -63,12 +57,9 @@ struct SetCard: Identifiable, CustomStringConvertible {
         
         var description: String {
             switch self {
-            case .purple:
-                return "purple"
-            case .pink:
-                return "green"
-            case .blue:
-                return "blue"
+            case .purple: "purple"
+            case .pink: "green"
+            case .blue: "blue"
             }
         }
     }
