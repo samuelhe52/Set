@@ -9,13 +9,26 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, Set!")
+        HStack {
+            VStack {
+                ForEach(SetCard.Shapes.allCases) { shape in
+                    CardView(card: SetCard(shape: shape, shapeCount: .one, shading: .solid, color: .purple))
+                }
+                .padding()
+            }
+            VStack {
+                ForEach(SetCard.Shapes.allCases) { shape in
+                    CardView(card: SetCard(shape: shape, shapeCount: .two, shading: .open, color: .pink))
+                }
+                .padding()
+            }
+            VStack {
+                ForEach(SetCard.Shapes.allCases) { shape in
+                    CardView(card: SetCard(shape: shape, shapeCount: .three, shading: .solid, color: .blue))
+                }
+                .padding()
+            }
         }
-        .padding()
     }
 }
 
