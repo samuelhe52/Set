@@ -64,3 +64,13 @@ struct SetCard: Identifiable, CustomStringConvertible {
         }
     }
 }
+
+extension SetCard: Equatable {
+    static func ==(lhs: SetCard, rhs: SetCard) -> Bool {
+        return
+            lhs.color == rhs.color &&
+            lhs.shading == rhs.shading &&
+            lhs.shape == rhs.shape &&
+            lhs.shapeCount == rhs.shapeCount
+    }
+}

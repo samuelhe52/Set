@@ -19,16 +19,24 @@ final class SetTests: XCTestCase {
     }
 
     func testExample() throws {
-        let testCard = SetCard(shape: .diamond, shapeCount: .two, shading: .striped, color: .pink)
+        let testCard1 = SetCard(shape: .diamond, shapeCount: .one, shading: .striped, color: .pink)
+//        let testCard2 = SetCard(shape: .diamond, shapeCount: .two, shading: .striped, color: .pink)
+//        let testCard3 = SetCard(shape: .diamond, shapeCount: .two, shading: .striped, color: .pink)
         
-        print(testCard)
+        let testCard2 = SetCard(shape: .oval, shapeCount: .one, shading: .solid, color: .blue)
+        let testCard3 = SetCard(shape: .squiggle, shapeCount: .three, shading: .open, color: .purple)
+        
+        XCTAssert(SetGame.isValidSet(card1: testCard1, card2: testCard2, card3: testCard3) == false)
     }
 
     func testPerformanceExample() throws {
-        // This is an example of a performance test case.
+        let testCard1 = SetCard(shape: .diamond, shapeCount: .one, shading: .striped, color: .pink)
+        let testCard2 = SetCard(shape: .oval, shapeCount: .two, shading: .solid, color: .blue)
+        let testCard3 = SetCard(shape: .squiggle, shapeCount: .three, shading: .open, color: .purple)
+        
+        // Performance measurement
         measure {
-            // Put the code you want to measure the time of here.
+            XCTAssert(SetGame.isValidSet(card1: testCard1, card2: testCard2, card3: testCard3) == true)
         }
     }
-
 }

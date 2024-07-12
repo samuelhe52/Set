@@ -25,4 +25,16 @@ struct SetGame {
         
         return tmpDeck
     }
+    
+    static func isValidSet(card1: SetCard, card2: SetCard, card3: SetCard) -> Bool {
+        func allSameOrAllDifferent<T: Equatable>(a: T, b: T, c: T) -> Bool {
+            return (a == b && b == c) || (a != b && b != c && a != c)
+        }
+        
+        return
+            allSameOrAllDifferent(a: card1.color, b: card2.color, c: card3.color) &&
+            allSameOrAllDifferent(a: card1.shading, b: card2.shading, c: card3.shading) &&
+            allSameOrAllDifferent(a: card1.shape, b: card2.shape, c: card3.shape) &&
+            allSameOrAllDifferent(a: card1.shapeCount, b: card2.shapeCount, c: card3.shapeCount)
+    }
 }
