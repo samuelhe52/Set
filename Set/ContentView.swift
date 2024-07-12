@@ -12,23 +12,21 @@ struct ContentView: View {
         HStack {
             VStack {
                 ForEach(SetCard.Shapes.allCases) { shape in
-                    CardView(card: SetCard(shape: shape, shapeCount: .one, shading: .solid, color: .purple))
+                    CardView(card: SetCard(shape: shape, shapeCount: .one, shading: .open, color: .purple))
                 }
-                .padding()
             }
             VStack {
                 ForEach(SetCard.Shapes.allCases) { shape in
-                    CardView(card: SetCard(shape: shape, shapeCount: .two, shading: .open, color: .pink))
+                    CardView(card: SetCard(shape: shape, shapeCount: .two, shading: .solid, color: .pink))
                 }
-                .padding()
             }
             VStack {
                 ForEach(SetCard.Shapes.allCases) { shape in
-                    CardView(card: SetCard(shape: shape, shapeCount: .three, shading: .solid, color: .blue))
+                    CardView(card: SetCard(shape: shape, shapeCount: .three, shading: .striped, color: .blue))
                 }
-                .padding()
             }
         }
+        .padding()
     }
 }
 
