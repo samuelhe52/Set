@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SetGameView: View {
+    @ObservedObject var setGame: SetGameViewModel
+    
     var body: some View {
         HStack {
             VStack {
@@ -31,5 +33,5 @@ struct SetGameView: View {
 }
 
 #Preview {
-    SetGameView()
+    SetGameView(setGame: SetGameViewModel())
 }

@@ -15,11 +15,12 @@ struct SetCard: Identifiable, CustomStringConvertible {
     private(set) var shading: Shadings
     private(set) var color: CardColor
     
-    var selected: Bool = false
+    var isChosen: Bool = false
+    var isMatched: Bool = false
     
     var id: UUID = UUID()
     var description: String { "A card with \(shapeCount.rawValue) \(color.description) \(shading.description) \(shape.description)(s)" }
-    
+        
     // MARK: - Enumerations for card properties
     
     enum Shapes: CustomStringConvertible, CaseIterable, Identifiable {
@@ -65,6 +66,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
     }
 }
 
+// Equatable conformation
 extension SetCard: Equatable {
     static func ==(lhs: SetCard, rhs: SetCard) -> Bool {
         return

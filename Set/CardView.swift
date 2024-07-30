@@ -11,6 +11,10 @@ import SwiftUI
 struct CardView: View {
     let card: SetCard
     
+    init(_ card: SetCard) {
+        self.card = card
+    }
+    
     // Card properties
     var shapeCount: Int { card.shapeCount.rawValue }
     var baseColor: Color {
@@ -68,17 +72,17 @@ struct CardView: View {
     HStack {
         VStack {
             ForEach(SetCard.Shapes.allCases) { shape in
-                CardView(card: SetCard(shape: shape, shapeCount: .one, shading: .open, color: .purple))
+                CardView(SetCard(shape: shape, shapeCount: .one, shading: .open, color: .purple))
             }
         }
         VStack {
             ForEach(SetCard.Shapes.allCases) { shape in
-                CardView(card: SetCard(shape: shape, shapeCount: .two, shading: .solid, color: .pink))
+                CardView(SetCard(shape: shape, shapeCount: .two, shading: .solid, color: .pink))
             }
         }
         VStack {
             ForEach(SetCard.Shapes.allCases) { shape in
-                CardView(card: SetCard(shape: shape, shapeCount: .three, shading: .striped, color: .blue))
+                CardView(SetCard(shape: shape, shapeCount: .three, shading: .striped, color: .blue))
             }
         }
     }

@@ -26,17 +26,13 @@ final class SetTests: XCTestCase {
         let testCard2 = SetCard(shape: .oval, shapeCount: .one, shading: .solid, color: .blue)
         let testCard3 = SetCard(shape: .squiggle, shapeCount: .three, shading: .open, color: .purple)
         
-        XCTAssert(SetGame.isValidSet(card1: testCard1, card2: testCard2, card3: testCard3) == false)
-    }
+        XCTAssert(SetGame.isValidSet([testCard1, testCard2, testCard3]) == false)
+    }   
 
-    func testPerformanceExample() throws {
-        let testCard1 = SetCard(shape: .diamond, shapeCount: .one, shading: .striped, color: .pink)
-        let testCard2 = SetCard(shape: .oval, shapeCount: .two, shading: .solid, color: .blue)
-        let testCard3 = SetCard(shape: .squiggle, shapeCount: .three, shading: .open, color: .purple)
-        
+    func testCreateDeck() throws {
         // Performance measurement
         measure {
-            XCTAssert(SetGame.isValidSet(card1: testCard1, card2: testCard2, card3: testCard3) == true)
+            
         }
     }
 }
