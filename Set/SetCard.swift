@@ -13,7 +13,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
     private(set) var shape: Shapes
     private(set) var shapeCount: ShapeCount
     private(set) var shading: Shadings
-    private(set) var color: CardColor
+    private(set) var color: CardColors
     
     var isChosen: Bool = false
     var isMatched: Bool = false
@@ -53,7 +53,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
         }
     }
     
-    enum CardColor: CustomStringConvertible, CaseIterable {
+    enum CardColors: CustomStringConvertible, CaseIterable {
         case purple, pink, blue
         
         var description: String {

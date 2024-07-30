@@ -18,7 +18,9 @@ struct SetGame {
         for number in SetCard.ShapeCount.allCases {
             for cardShape in SetCard.Shapes.allCases {
                 for shading in SetCard.Shadings.allCases {
-                    tmpDeck.append(SetCard(shape: cardShape, shapeCount: number, shading: shading, color: .pink))
+                    for color in SetCard.CardColors.allCases {
+                        tmpDeck.append(SetCard(shape: cardShape, shapeCount: number, shading: shading, color: color))
+                    }
                 }
             }
         }

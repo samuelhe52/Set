@@ -11,22 +11,9 @@ struct SetGameView: View {
     @ObservedObject var setGame: SetGameViewModel
     
     var body: some View {
-        HStack {
-            VStack {
-                ForEach(SetCard.Shapes.allCases) { shape in
-                    CardView(card: SetCard(shape: shape, shapeCount: .one, shading: .open, color: .purple))
-                }
-            }
-            VStack {
-                ForEach(SetCard.Shapes.allCases) { shape in
-                    CardView(card: SetCard(shape: shape, shapeCount: .two, shading: .solid, color: .pink))
-                }
-            }
-            VStack {
-                ForEach(SetCard.Shapes.allCases) { shape in
-                    CardView(card: SetCard(shape: shape, shapeCount: .three, shading: .striped, color: .blue))
-                }
-            }
+        AspectVGrid(items: setGame.cards.shuffled().prefix(16), aspectRatio: 5/7, allRowsFilled: true) { card in
+            CardView(card)
+                .padding(5)
         }
         .padding()
     }
