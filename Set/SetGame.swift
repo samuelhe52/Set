@@ -10,6 +10,31 @@ import Foundation
 struct SetGame {
     var deck: [SetCard] = createDeck()
     
+    mutating func chooseCard(_ card: SetCard) {
+        guard let chosenCardIndex = deck.firstIndex(where: { $0.id == card.id }) else {
+            print("No such card in deck!")
+            return
+        }
+        
+        print("Card chosen: \(card.description)")
+        
+        let chosenCards = deck.enumerated().filter { $1.isChosen }
+        if chosenCards.count == 2 {
+            if SetGame.isValidSet(chosenCards.map { $1 }) {
+                chosenCards.forEach { 
+                    deck[$0.offset].isMatched = true
+                    deck[$0.offset].isChosen = false
+                }
+                print("Matched: \(chosenCards.map({ $1.description }).joined(separator: " "))")
+            } else {
+                print("Match failed: \(chosenCards.map({ $1.description }).joined(separator: " "))")
+            }
+        } else {
+            if deck[chosenCardIndex].isMatched == false {
+                deck[chosenCardIndex].isChosen = true
+            }
+        }
+    }
     
     // MARK: - static methods
     private static func createDeck() -> [SetCard]{
