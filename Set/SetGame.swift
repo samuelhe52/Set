@@ -9,33 +9,41 @@ import Foundation
 
 struct SetGame {
     var deck: [SetCard] = createDeck()
+    var matchedCards:[SetCard] = []
+    private(set) var score: Int = 0
     
-    mutating func chooseCard(_ card: SetCard) {
+    mutating func toggleChosenState(_ card: SetCard) {
         guard let chosenCardIndex = deck.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in deck!")
             return
         }
-        
-        print("Card chosen: \(card.description)")
-        
-        let chosenCards = deck.enumerated().filter { $1.isChosen }
-        if chosenCards.count == 2 {
-            if SetGame.isValidSet(chosenCards.map { $1 }) {
-                chosenCards.forEach { 
-                    deck[$0.offset].isMatched = true
-                    deck[$0.offset].isChosen = false
+                
+        if deck.chosenCardCount < 3 || deck.chosenCards.contains(deck[chosenCardIndex]) {
+            deck[chosenCardIndex].isChosen.toggle()
+            
+            switch deck.chosenCardCount {
+            case 3:
+                if deck.chosenCards.isValidSet {
+                    print("Matched: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
+                    
+                    matchedCards.append(contentsOf: deck.chosenCards)
+                    deck.remove(atOffsets: deck.chosenCardIndices)
+                    deck.chosenCardIndices.forEach { index in
+                        deck[index].isChosen = false
+                    }
+                    score += 1
+                } else {
+                    print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
                 }
-                print("Matched: \(chosenCards.map({ $1.description }).joined(separator: " "))")
-            } else {
-                print("Match failed: \(chosenCards.map({ $1.description }).joined(separator: " "))")
+            default:
+                break
             }
+            
         } else {
-            if deck[chosenCardIndex].isMatched == false {
-                deck[chosenCardIndex].isChosen = true
-            }
+            print("No more than 3 cards can be chosen.")
         }
     }
-    
+        
     // MARK: - static methods
     private static func createDeck() -> [SetCard]{
         var tmpDeck: Array<SetCard> = []
@@ -68,4 +76,17 @@ struct SetGame {
             allSameOrAllDifferent(a: cards[0].shape, b: cards[1].shape, c: cards[2].shape) &&
             allSameOrAllDifferent(a: cards[0].shapeCount, b: cards[1].shapeCount, c: cards[2].shapeCount)
     }
+}
+
+extension Array where Element == SetCard {
+    var chosenCards: [SetCard] { self.lazy.filter { $0.isChosen } }
+    var chosenCardCount: Int { chosenCards.count }
+    var chosenCardIndices: IndexSet {
+        return IndexSet(
+            self.enumerated()
+                .filter { $1.isChosen }
+                .map { $0.offset }
+        )
+    }
+    var isValidSet: Bool { SetGame.isValidSet(chosenCards) }
 }

@@ -14,13 +14,19 @@ class SetGameViewModel: ObservableObject {
     
     @Published private var setGame = createSetGame()
     
-    var cards: [SetCard] {
-        return setGame.deck
-    }
+    var cards: [SetCard] { setGame.deck }
+    var matchedCards: [SetCard] { setGame.matchedCards }
+    
+    var score: Int { setGame.score }
     
     // MARK: - Intent
-    func choose(_ card: SetCard) {
-        setGame.chooseCard(card)
+    func toggleChosenState(_ card: SetCard) {
+        setGame.toggleChosenState(card)
     }
-
+    
+    func unChooseAll() {
+        for index in setGame.deck.indices {
+            setGame.deck[index].isChosen = false
+        }
+    }
 }

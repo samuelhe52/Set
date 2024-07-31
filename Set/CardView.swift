@@ -65,6 +65,7 @@ struct CardView: View {
                     .padding()
                 }
         }
+        .opacity(card.isChosen ? 0.6 : 1)
     }
 }
 

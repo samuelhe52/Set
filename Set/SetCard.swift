@@ -16,7 +16,6 @@ struct SetCard: Identifiable, CustomStringConvertible {
     private(set) var color: CardColors
     
     var isChosen: Bool = false
-    var isMatched: Bool = false
     
     var id: UUID = UUID()
     var description: String { "A card with \(shapeCount.rawValue) \(color.description) \(shading.description) \(shape.description)(s)" }
@@ -59,7 +58,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
         var description: String {
             switch self {
             case .purple: "purple"
-            case .pink: "green"
+            case .pink: "pink"
             case .blue: "blue"
             }
         }
