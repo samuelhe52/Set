@@ -10,9 +10,11 @@ import SwiftUI
 /// Displays a certain Set game card with a rounded rectangle surrounding the shape(s).
 struct CardView: View {
     let card: SetCard
+    var shouldBounce: Bool
     
-    init(_ card: SetCard) {
+    init(_ card: SetCard, shouldBounce: Bool = false) {
         self.card = card
+        self.shouldBounce = shouldBounce
     }
     
     // Card properties
@@ -65,7 +67,10 @@ struct CardView: View {
                     .padding()
                 }
         }
-        .opacity(card.isChosen ? 0.6 : 1)
+        .scaleEffect(card.isChosen ? 1.1 : 1)
+        .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
+        .scaleEffect(shouldBounce ? 1.1 : 1)
+        .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: shouldBounce)
     }
 }
 

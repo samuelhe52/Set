@@ -28,12 +28,13 @@ struct SetGame {
                     
                     matchedCards.append(contentsOf: deck.chosenCards)
                     deck.remove(atOffsets: deck.chosenCardIndices)
-                    deck.chosenCardIndices.forEach { index in
-                        deck[index].isChosen = false
-                    }
                     score += 1
                 } else {
                     print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
+                    deck[chosenCardIndex].shouldBounce = true
+                }
+                deck.chosenCardIndices.forEach { index in
+                    deck[index].isChosen = false
                 }
             default:
                 break
@@ -58,7 +59,7 @@ struct SetGame {
             }
         }
         
-        return tmpDeck
+        return tmpDeck.shuffled()
     }
     
     static func isValidSet(_ cards: [SetCard]) -> Bool {
