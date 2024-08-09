@@ -22,11 +22,14 @@ class SetGameViewModel: ObservableObject {
     // MARK: - Intent
     func toggleChosenState(_ card: SetCard) {
         setGame.toggleChosenState(card)
+        if setGame.deck.contains(where: { $0.shouldBounce }) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.setGame.deck[self.setGame.deck.firstIndex(of: card)!].shouldBounce = false
+            }
+        }
     }
     
-    func unChooseAll() {
-        for index in setGame.deck.indices {
-            setGame.deck[index].isChosen = false
-        }
+    func startNewGame() {
+        setGame = SetGameViewModel.createSetGame()
     }
 }

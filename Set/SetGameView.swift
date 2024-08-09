@@ -17,7 +17,7 @@ struct SetGameView: View {
                 Spacer()
                 score
                 Spacer()
-                unChooseAll
+                newGame
                 Spacer()
             }
             .padding()
@@ -58,9 +58,9 @@ struct SetGameView: View {
             }
     }
     
-    var unChooseAll: some View {
-        Button(action: { setGame.unChooseAll() }, label: {
-            Text("Restore")
+    var newGame: some View {
+        Button(action: { setGame.startNewGame() }, label: {
+            Text("New Game")
         })
     }
 }
