@@ -16,7 +16,6 @@ struct SetCard: Identifiable, CustomStringConvertible {
     private(set) var color: CardColors
     
     var isChosen: Bool = false
-    var shouldBounce: Bool = false
     
     var id: UUID = UUID()
     var description: String { "A card with \(shapeCount.rawValue) \(color.description) \(shading.description) \(shape.description)(s)" }

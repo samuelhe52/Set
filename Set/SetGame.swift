@@ -12,10 +12,11 @@ struct SetGame {
     var matchedCards:[SetCard] = []
     private(set) var score: Int = 0
     
-    mutating func toggleChosenState(_ card: SetCard) {
+    // Returns the indices of cards that failed to form a set, if any.
+    mutating func toggleChosen(_ card: SetCard) -> IndexSet? {
         guard let chosenCardIndex = deck.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in deck!")
-            return
+            return nil
         }
                 
         if deck.chosenCardCount < 3 || deck.chosenCards.contains(deck[chosenCardIndex]) {
@@ -23,6 +24,12 @@ struct SetGame {
             
             switch deck.chosenCardCount {
             case 3:
+                defer {
+                    deck.chosenCardIndices.forEach { index in
+                        deck[index].isChosen = false
+                    }
+                }
+                
                 if deck.chosenCards.isValidSet {
                     print("Matched: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
                     
@@ -31,17 +38,15 @@ struct SetGame {
                     score += 1
                 } else {
                     print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    deck[chosenCardIndex].shouldBounce = true
-                }
-                deck.chosenCardIndices.forEach { index in
-                    deck[index].isChosen = false
+                    return deck.chosenCardIndices
                 }
             default:
                 break
             }
-            
+            return nil
         } else {
             print("No more than 3 cards can be chosen.")
+            return nil
         }
     }
         

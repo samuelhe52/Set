@@ -9,7 +9,9 @@ import SwiftUI
 
 struct SetGameView: View {
     @ObservedObject var setGame: SetGameViewModel
-    
+    @State private var cardsThatShouldShake: IndexSet?
+    @State private var shakeTimer: Timer?
+
     var body: some View {
         VStack {
             cards
@@ -26,12 +28,14 @@ struct SetGameView: View {
     }
     
     var cards: some View {
-        AspectVGrid(items: setGame.cards.prefix(42), aspectRatio: 5/7, minWidth: 80) { card in
-            CardView(card, shouldBounce: card.shouldBounce)
+        AspectVGrid(items: setGame.cards.prefix(24), aspectRatio: 5/7, minWidth: 80) { card in
+            CardView(card, shouldShake: (cardsThatShouldShake?.contains(setGame.cards.firstIndex(of: card) ?? -1)) ?? false)
                 .onTapGesture {
-                    setGame.toggleChosenState(card)
+                    if let cardsThatShouldShake = setGame.toggleChosen(card) {
+                        startShakeAnimation(for: cardsThatShouldShake)
+                    }
                 }
-                .padding(6)
+                .padding(8)
         }
         .padding()
     }
@@ -51,6 +55,17 @@ struct SetGameView: View {
         Button(action: { setGame.startNewGame() }, label: {
             Text("New Game")
         })
+    }
+    
+    private func startShakeAnimation(for cards: IndexSet) {
+        // Cancel any existing timer
+        shakeTimer?.invalidate()
+        // Set the cards to shake
+        self.cardsThatShouldShake = cards
+        // After 0.5 seconds, cancel shaking
+        shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
+            self.cardsThatShouldShake = nil
+        }
     }
 }
 
