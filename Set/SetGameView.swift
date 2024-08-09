@@ -26,25 +26,14 @@ struct SetGameView: View {
     }
     
     var cards: some View {
-        VStack {
-            AspectVGrid(items: setGame.cards.prefix(4), aspectRatio: 5/7, allRowsFilled: true) { card in
-                CardView(card)
-                    .onTapGesture {
-                        setGame.toggleChosenState(card)
-                    }
-                    .padding(5)
-            }
-            .padding()
-            Spacer()
-            AspectVGrid(items: setGame.matchedCards, aspectRatio: 5/7, allRowsFilled: true) { card in
-                CardView(card)
-                    .onTapGesture {
-                        setGame.toggleChosenState(card)
-                    }
-                    .padding(5)
-            }
-            .padding()
+        AspectVGrid(items: setGame.cards.prefix(42), aspectRatio: 5/7, minWidth: 80) { card in
+            CardView(card, shouldBounce: card.shouldBounce)
+                .onTapGesture {
+                    setGame.toggleChosenState(card)
+                }
+                .padding(6)
         }
+        .padding()
     }
     
     var score: some View {

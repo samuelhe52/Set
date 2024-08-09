@@ -10,56 +10,86 @@ import SwiftUI
 struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where Items.Element: Identifiable {
     var items: Items
     var aspectRatio: CGFloat = 1
+    var minWidth: CGFloat
     var allRowsFilled: Bool = false
     @ViewBuilder var contentBuilder: (Items.Element) -> ItemView
     
     var body: some View {
         GeometryReader { geometry in
-            let gridItemWidth = gridItemWidthThatFits(
+            let columnCount = properColumnCount(
                 itemCount: items.count,
                 size: geometry.size,
-                atAspectRatio: aspectRatio,
+                minWidth: minWidth,
                 allRowsFilled: allRowsFilled
             )
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: gridItemWidth), spacing: 0)], spacing: 0) {
-                ForEach(items) { item in
-                    contentBuilder(item)
-                        .aspectRatio(aspectRatio, contentMode: .fit)
+            
+            let width = geometry.size.width / CGFloat(columnCount)
+            let height = width / aspectRatio
+            let rowCount = (CGFloat(items.count) / CGFloat(columnCount)).rounded(.up)
+            
+            let scrolling = rowCount * height > geometry.size.height
+            
+            return Group {
+                if scrolling {
+                    if #available(iOS 16.0, *) {
+                        ScrollView(showsIndicators: false) {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: width), spacing: 0)], spacing: 0) {
+                                ForEach(items) { item in
+                                    contentBuilder(item)
+                                        .aspectRatio(aspectRatio, contentMode: .fill)
+                                }
+                            }
+                        }.scrollIndicators(.never)
+                    } else {
+                        ScrollView(showsIndicators: false) {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: width), spacing: 0)], spacing: 0) {
+                                ForEach(items) { item in
+                                    contentBuilder(item)
+                                        .aspectRatio(aspectRatio, contentMode: .fill)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: width), spacing: 0)], spacing: 0) {
+                        ForEach(items) { item in
+                            contentBuilder(item)
+                                .aspectRatio(aspectRatio, contentMode: .fill)
+                        }
+                    }
                 }
             }
+            
         }
     }
     
-    /// Finds the appropriate grid item width that best fits in a given size
-    /// and returns it.
-    func gridItemWidthThatFits(
+    func properColumnCount(
         itemCount: Int,
         size: CGSize,
-        atAspectRatio aspectRatio: CGFloat,
+        minWidth: CGFloat = 0,
         allRowsFilled: Bool = false
-    ) -> CGFloat {
-        var columnCount: CGFloat = 1
-        repeat {
-            let width = size.width / columnCount
-            let height = width / aspectRatio
-            
-            let rowCount = (CGFloat(itemCount) / CGFloat(columnCount)).rounded(.up)
+    ) -> Int {
+        var columnCount = itemCount
+        let totalWidth = size.width
+        
+        while columnCount > 0 {
+            let itemWidth = totalWidth / CGFloat(columnCount)
             
             if allRowsFilled {
-                if (CGFloat(rowCount * height) < size.height) && (itemCount % Int(columnCount) == 0) {
-                    return (size.width / CGFloat(columnCount)).rounded(.down)
+                if itemWidth > minWidth && (itemCount % columnCount == 0) {
+                    break
                 } else {
-                    columnCount += 1
+                    columnCount -= 1
                 }
             } else {
-                if CGFloat(rowCount * height) < size.height {
-                    return (size.width / CGFloat(columnCount)).rounded(.down)
+                if itemWidth > minWidth {
+                    break
                 } else {
-                    columnCount += 1
+                    columnCount -= 1
                 }
             }
-        } while columnCount < CGFloat(itemCount)
-        return min(size.width / CGFloat(columnCount), size.height * aspectRatio).rounded(.down)
+        }
+        return columnCount
     }
 }
 
