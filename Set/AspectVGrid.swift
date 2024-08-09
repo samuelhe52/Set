@@ -18,22 +18,22 @@ struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where It
         GeometryReader { geometry in
             let columnCount = properColumnCount(
                 itemCount: items.count,
-                size: geometry.size,
+                totalWidth: geometry.size.width,
                 minWidth: minWidth,
                 allRowsFilled: allRowsFilled
             )
             
-            let width = geometry.size.width / CGFloat(columnCount)
-            let height = width / aspectRatio
+            let itemWidth = geometry.size.width / CGFloat(columnCount)
+            let itemHeight = itemWidth / aspectRatio
             let rowCount = (CGFloat(items.count) / CGFloat(columnCount)).rounded(.up)
             
-            let scrolling = rowCount * height > geometry.size.height
+            let scrolling = rowCount * itemHeight > geometry.size.height
             
             return Group {
                 if scrolling {
                     if #available(iOS 16.0, *) {
-                        ScrollView(showsIndicators: false) {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: width), spacing: 0)], spacing: 0) {
+                        ScrollView {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
                                 ForEach(items) { item in
                                     contentBuilder(item)
                                         .aspectRatio(aspectRatio, contentMode: .fill)
@@ -42,7 +42,7 @@ struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where It
                         }.scrollIndicators(.never)
                     } else {
                         ScrollView(showsIndicators: false) {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: width), spacing: 0)], spacing: 0) {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
                                 ForEach(items) { item in
                                     contentBuilder(item)
                                         .aspectRatio(aspectRatio, contentMode: .fill)
@@ -51,7 +51,7 @@ struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where It
                         }
                     }
                 } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: width), spacing: 0)], spacing: 0) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
                         ForEach(items) { item in
                             contentBuilder(item)
                                 .aspectRatio(aspectRatio, contentMode: .fill)
@@ -65,29 +65,19 @@ struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where It
     
     func properColumnCount(
         itemCount: Int,
-        size: CGSize,
+        totalWidth: CGFloat,
         minWidth: CGFloat = 0,
         allRowsFilled: Bool = false
     ) -> Int {
-        var columnCount = itemCount
-        let totalWidth = size.width
+        var columnCount = min(itemCount, Int(totalWidth / minWidth))
         
         while columnCount > 0 {
             let itemWidth = totalWidth / CGFloat(columnCount)
             
-            if allRowsFilled {
-                if itemWidth > minWidth && (itemCount % columnCount == 0) {
-                    break
-                } else {
-                    columnCount -= 1
-                }
-            } else {
-                if itemWidth > minWidth {
-                    break
-                } else {
-                    columnCount -= 1
-                }
+            if itemWidth >= minWidth && (!allRowsFilled || itemCount % columnCount == 0) {
+                break
             }
+            columnCount -= 1
         }
         return columnCount
     }
