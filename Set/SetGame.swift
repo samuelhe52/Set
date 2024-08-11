@@ -78,7 +78,7 @@ struct SetGame {
             }
         }
         
-        return tmpDeck
+        return tmpDeck.shuffled()
     }
     
     static func isValidSet(_ cards: [SetCard]) -> Bool {

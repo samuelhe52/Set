@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FluidGradient
 
 struct SetGameView: View {
     @ObservedObject var setGameVM: SetGameViewModel
@@ -22,14 +23,14 @@ struct SetGameView: View {
     var cards: some View {
         AspectVGrid(items: setGameVM.cards,
                     aspectRatio: 5/7,
-                    minWidth: 70) { card in
+                    minWidth: 80) { card in
             createCard(card)
                 .onTapGesture {
                     setGameVM.toggleChosen(card)
                 }
-                .padding(7)
+                .padding(8)
         }
-        .animation(.easeInOut(duration: 0.2), value: setGameVM.cards)
+        .animation(.easeInOut(duration: 0.4), value: setGameVM.cards)
         .padding()
     }
     
@@ -69,13 +70,28 @@ struct SetGameView: View {
     }
     
     @ViewBuilder
+    func fluidGradient(color: Color) -> some View {
+        let colors: [Color] = [color.lightened(strength: 1), color, color.lightened(strength: 0.5)]
+        let speed: Double = 0.3
+        
+        FluidGradient(blobs: colors,
+                      speed: speed)
+    }
+    
+    @ViewBuilder
     private func createCard(_ card: SetCard) -> some View {
         let shouldShake = determineCardShouldShake(card)
-        
-        CardView(card)
-            .highlight(enabled: card.isChosen)
+        let base = CardView(card)
+        let baseColor = base.baseColor
+        base
+            .overlay {
+                fluidGradient(color: baseColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                    .blur(radius: 5)
+                    .opacity(card.isChosen ? 1 : 0)
+            }
             .scaleEffect(card.isChosen ? 1.1 : 1)
-            .animation(.smooth(duration: 0.25, extraBounce: 0.5), value: card.isChosen)
+            .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
             .rotationEffect(.degrees(shouldShake ? 7 : 0))
             .animation(
                 shouldShake ? .easeInOut(duration: 0.06).repeatForever() : .default,

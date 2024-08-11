@@ -15,6 +15,10 @@
 		9F1DD0012C58DFD0002FBD71 /* SetGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DD0002C58DFD0002FBD71 /* SetGameViewModel.swift */; };
 		9F54A7B72C58F3EA00E5A251 /* SetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F54A7B62C58F3EA00E5A251 /* SetUITests.swift */; };
 		9F54A7B92C58F3EA00E5A251 /* SetUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F54A7B82C58F3EA00E5A251 /* SetUITestsLaunchTests.swift */; };
+		9F6C7A212C68FFAE00FE456D /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = 9F6C7A202C68FFAE00FE456D /* FluidGradient */; };
+		9F6C7A242C69000800FE456D /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = 9F6C7A232C69000800FE456D /* FluidGradient */; };
+		9F6C7A272C69007900FE456D /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = 9F6C7A262C69007900FE456D /* FluidGradient */; };
+		9F6C7A3A2C69078600FE456D /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = 9F6C7A392C69078600FE456D /* FluidGradient */; };
 		9F7057442C3152E60068EC81 /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7057432C3152E60068EC81 /* SetApp.swift */; };
 		9F7057462C3152E60068EC81 /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7057452C3152E60068EC81 /* SetGameView.swift */; };
 		9F7057482C3152E70068EC81 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F7057472C3152E70068EC81 /* Assets.xcassets */; };
@@ -75,6 +79,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F6C7A212C68FFAE00FE456D /* FluidGradient in Frameworks */,
+				9F6C7A272C69007900FE456D /* FluidGradient in Frameworks */,
+				9F6C7A242C69000800FE456D /* FluidGradient in Frameworks */,
+				9F6C7A3A2C69078600FE456D /* FluidGradient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +249,9 @@
 				Base,
 			);
 			mainGroup = 9F7057372C3152E60068EC81;
+			packageReferences = (
+				9F6C7A382C69078600FE456D /* XCRemoteSwiftPackageReference "FluidGradient" */,
+			);
 			productRefGroup = 9F7057412C3152E60068EC81 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -668,6 +679,37 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9F6C7A382C69078600FE456D /* XCRemoteSwiftPackageReference "FluidGradient" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Cindori/FluidGradient";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9F6C7A202C68FFAE00FE456D /* FluidGradient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FluidGradient;
+		};
+		9F6C7A232C69000800FE456D /* FluidGradient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FluidGradient;
+		};
+		9F6C7A262C69007900FE456D /* FluidGradient */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FluidGradient;
+		};
+		9F6C7A392C69078600FE456D /* FluidGradient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9F6C7A382C69078600FE456D /* XCRemoteSwiftPackageReference "FluidGradient" */;
+			productName = FluidGradient;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9F7057382C3152E60068EC81 /* Project object */;
 }
