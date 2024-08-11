@@ -61,9 +61,9 @@ struct SetGame {
         var tmpDeck: Array<SetCard> = []
         
         for number in SetCard.ShapeCount.allCases {
-            for cardShape in SetCard.Shapes.allCases {
-                for shading in SetCard.Shadings.allCases {
-                    for color in SetCard.CardColors.allCases {
+            for cardShape in SetCard.CardShape.allCases {
+                for shading in SetCard.CardShading.allCases {
+                    for color in SetCard.CardColor.allCases {
                         tmpDeck.append(SetCard(shape: cardShape, shapeCount: number, shading: shading, color: color))
                     }
                 }

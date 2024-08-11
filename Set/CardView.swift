@@ -71,17 +71,17 @@ struct CardView: View {
 #Preview {
     HStack {
         VStack {
-            ForEach(SetCard.Shapes.allCases) { shape in
+            ForEach(SetCard.CardShape.allCases) { shape in
                 CardView(SetCard(shape: shape, shapeCount: .one, shading: .open, color: .purple))
             }
         }
         VStack {
-            ForEach(SetCard.Shapes.allCases) { shape in
+            ForEach(SetCard.CardShape.allCases) { shape in
                 CardView(SetCard(shape: shape, shapeCount: .two, shading: .solid, color: .pink))
             }
         }
         VStack {
-            ForEach(SetCard.Shapes.allCases) { shape in
+            ForEach(SetCard.CardShape.allCases) { shape in
                 CardView(SetCard(shape: shape, shapeCount: .three, shading: .striped, color: .blue))
             }
         }

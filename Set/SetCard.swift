@@ -10,10 +10,10 @@ import SwiftUI
 
 struct SetCard: Identifiable, CustomStringConvertible {
     // card properties declaration
-    private(set) var shape: Shapes
+    private(set) var shape: CardShape
     private(set) var shapeCount: ShapeCount
-    private(set) var shading: Shadings
-    private(set) var color: CardColors
+    private(set) var shading: CardShading
+    private(set) var color: CardColor
     
     var isChosen: Bool = false
     
@@ -22,7 +22,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
         
     // MARK: - Enumerations for card properties
     
-    enum Shapes: CustomStringConvertible, CaseIterable, Identifiable {
+    enum CardShape: CustomStringConvertible, CaseIterable, Identifiable {
         case diamond, squiggle, oval
         
         var description: String {
@@ -40,7 +40,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
         case one = 1, two, three
     }
 
-    enum Shadings: CustomStringConvertible, CaseIterable {
+    enum CardShading: CustomStringConvertible, CaseIterable {
         case solid, striped, open
         
         var description: String {
@@ -52,7 +52,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
         }
     }
     
-    enum CardColors: CustomStringConvertible, CaseIterable {
+    enum CardColor: CustomStringConvertible, CaseIterable {
         case purple, pink, blue
         
         var description: String {
