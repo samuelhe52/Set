@@ -9,7 +9,8 @@ import Foundation
 
 struct SetGame {
     var deck: [SetCard] = createDeck()
-    var matchedCards:[SetCard] = []
+    var matchedCards: [SetCard] = []
+    var visibleCardCount: Int = 12
     private(set) var score: Int = 0
     
     // Returns the indices of cards that failed to form a set, if any.
@@ -35,6 +36,7 @@ struct SetGame {
                     
                     matchedCards.append(contentsOf: deck.chosenCards)
                     deck.remove(atOffsets: deck.chosenCardIndices)
+                    visibleCardCount -= 3
                     score += 1
                 } else {
                     print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
@@ -48,6 +50,10 @@ struct SetGame {
             print("No more than 3 cards can be chosen.")
             return nil
         }
+    }
+    
+    mutating func dealThreeMoreCards() {
+        visibleCardCount = min(visibleCardCount + 3, deck.count - matchedCards.count)
     }
         
     // MARK: - static methods

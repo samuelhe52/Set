@@ -8,67 +8,98 @@
 import SwiftUI
 
 struct SetGameView: View {
-    @ObservedObject var setGame: SetGameViewModel
-    @State private var cardsThatShouldShake: IndexSet?
-    @State private var shakeTimer: Timer?
+    @ObservedObject var setGameVM: SetGameViewModel
 
     var body: some View {
         VStack {
             cards
-            HStack {
-                Spacer()
-                score
-                Spacer()
-                newGame
-                Spacer()
-            }
-            .padding()
+            Spacer()
+            bottomBar
             Spacer(minLength: 20)
         }
     }
     
     var cards: some View {
-        AspectVGrid(items: setGame.cards.prefix(24), aspectRatio: 5/7, minWidth: 80) { card in
-            CardView(card, shouldShake: (cardsThatShouldShake?.contains(setGame.cards.firstIndex(of: card) ?? -1)) ?? false)
+        AspectVGrid(items: setGameVM.cards,
+                    aspectRatio: 5/7,
+                    minWidth: 80) { card in
+            createCardView(card)
                 .onTapGesture {
-                    if let cardsThatShouldShake = setGame.toggleChosen(card) {
-                        startShakeAnimation(for: cardsThatShouldShake)
-                    }
+                    setGameVM.toggleChosen(card)
                 }
                 .padding(8)
+        }
+        .animation(.easeInOut, value: setGameVM.cards.count)
+        .padding()
+    }
+    
+    var status: some View {
+        HStack {
+            Text("Score: \(setGameVM.score)")
+            Divider().frame(width: 10, height: 20)
+            Text("Matched: \(setGameVM.matchedCards.count) / 81")
+        }
+        .font(.title3)
+        .background {
+            RoundedRectangle(cornerRadius: 10)
+                .scale(1.2)
+                .fill(.blue.lighter)
+                .opacity(0.7)
+        }
+    }
+    
+    var bottomBar: some View {
+        VStack {
+            HStack {
+                status.padding()
+            }
+            HStack {
+                newGame
+                Spacer()
+                dealThreeMoreCards
+            }
         }
         .padding()
     }
     
-    var score: some View {
-        Text("Score: \(setGame.score)")
-            .font(.title3)
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .scale(1.2)
-                    .fill(.blue.lighter)
-                    .opacity(0.7)
-            }
-    }
-    
     var newGame: some View {
-        Button(action: { setGame.startNewGame() }, label: {
+        Button(action: { 
+            setGameVM.startNewGame()
+        }, label: {
             Text("New Game")
         })
     }
     
-    private func startShakeAnimation(for cards: IndexSet) {
-        // Cancel any existing timer
-        shakeTimer?.invalidate()
-        // Set the cards to shake
-        self.cardsThatShouldShake = cards
-        // After 0.5 seconds, cancel shaking
-        shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
-            self.cardsThatShouldShake = nil
+    var dealThreeMoreCards: some View {
+        Button(action: { setGameVM.dealThreeMoreCards() }, label: {
+            Text("3 More Cards")
+        })
+        .disabled(!setGameVM.canDealMoreCards)
+    }
+    
+    @ViewBuilder
+    private func createCardView(_ card: SetCard) -> some View {
+        let shouldShake = determineCardShouldShake(card)
+        
+        CardView(card)
+            .scaleEffect(card.isChosen ? 1.1 : 1)
+            .animation(.smooth(duration: 0.25, extraBounce: 0.5), value: card.isChosen)
+            .rotationEffect(.degrees(shouldShake ? 7 : 0))
+            .animation(
+                shouldShake ? .easeInOut(duration: 0.06).repeatForever() : .default,
+                value: shouldShake
+            )
+    }
+    
+    private func determineCardShouldShake(_ card: SetCard) -> Bool {
+        if let cardsThatShouldShake = setGameVM.cardsThatShouldShake {
+            cardsThatShouldShake.contains(setGameVM.cards.firstIndex(of: card) ?? -1)
+        } else {
+            false
         }
     }
 }
 
 #Preview {
-    SetGameView(setGame: SetGameViewModel())
+    SetGameView(setGameVM: SetGameViewModel())
 }

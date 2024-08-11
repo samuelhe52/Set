@@ -8,23 +8,40 @@
 import Foundation
 
 class SetGameViewModel: ObservableObject {
-    static func createSetGame() -> SetGame {
-        return SetGame()
-    }
-    
-    @Published private var setGame = createSetGame()
-    
-    var cards: [SetCard] { setGame.deck }
+    @Published private var setGame = SetGame()
+    @Published private(set) var cardsThatShouldShake: IndexSet?
+        
+    var cards: ArraySlice<SetCard> { setGame.deck.prefix(setGame.visibleCardCount) }
     var matchedCards: [SetCard] { setGame.matchedCards }
-    
     var score: Int { setGame.score }
     
+    private var maxVisibleCardCount: Int { setGame.deck.count - matchedCards.count }
+    var canDealMoreCards: Bool { setGame.visibleCardCount < maxVisibleCardCount }
+    
+    private var shakeTimer: Timer?
+    private func startShaking(for cards: IndexSet) {
+        // Cancel any existing timer
+        shakeTimer?.invalidate()
+        // Set the cards to shake
+        self.cardsThatShouldShake = cards
+        // After 0.5 seconds, cancel shaking
+        shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
+            self.cardsThatShouldShake = nil
+        }
+    }
+
     // MARK: - Intent
-    func toggleChosen(_ card: SetCard) -> IndexSet? {
-        return setGame.toggleChosen(card)
+    func toggleChosen(_ card: SetCard) {
+        if let cardsThatShouldShake = setGame.toggleChosen(card) {
+            startShaking(for: cardsThatShouldShake)
+        }
     }
     
     func startNewGame() {
-        setGame = SetGameViewModel.createSetGame()
+        setGame = SetGame()
+    }
+    
+    func dealThreeMoreCards() {
+        setGame.dealThreeMoreCards()
     }
 }

@@ -10,11 +10,9 @@ import SwiftUI
 /// Displays a certain Set game card with a rounded rectangle surrounding the shape(s).
 struct CardView: View {
     let card: SetCard
-    var shouldShake: Bool
     
-    init(_ card: SetCard, shouldShake: Bool = false) {
+    init(_ card: SetCard) {
         self.card = card
-        self.shouldShake = shouldShake
     }
     
     // Card properties
@@ -67,13 +65,6 @@ struct CardView: View {
                     .padding()
                 }
         }
-        .rotationEffect(.degrees(shouldShake ? 7 : 0))
-        .animation(
-            shouldShake ? .easeInOut(duration: 0.06).repeatForever() : .default,
-            value: shouldShake
-        )
-        .scaleEffect(card.isChosen ? 1.1 : 1)
-        .animation(.smooth(duration: 0.25, extraBounce: 0.5), value: card.isChosen)
     }
 }
 
