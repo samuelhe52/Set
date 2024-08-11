@@ -14,50 +14,41 @@ struct SetGameView: View {
         VStack {
             cards
             Spacer()
+            status
             bottomBar
-            Spacer(minLength: 20)
         }
     }
     
     var cards: some View {
         AspectVGrid(items: setGameVM.cards,
                     aspectRatio: 5/7,
-                    minWidth: 80) { card in
-            createCardView(card)
+                    minWidth: 70) { card in
+            createCard(card)
                 .onTapGesture {
                     setGameVM.toggleChosen(card)
                 }
-                .padding(8)
+                .padding(7)
         }
-        .animation(.easeInOut, value: setGameVM.cards.count)
+        .animation(.easeInOut(duration: 0.2), value: setGameVM.cards)
         .padding()
     }
     
     var status: some View {
-        HStack {
-            Text("Score: \(setGameVM.score)")
-            Divider().frame(width: 10, height: 20)
-            Text("Matched: \(setGameVM.matchedCards.count) / 81")
-        }
-        .font(.title3)
-        .background {
-            RoundedRectangle(cornerRadius: 10)
-                .scale(1.2)
-                .fill(.blue.lighter)
-                .opacity(0.7)
-        }
+        Text("Matched: \(setGameVM.matchedCards.count) / 81")
+            .font(.title3)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .scale(1.2)
+                    .fill(.blue.lighter)
+                    .opacity(0.7)
+            }
     }
     
     var bottomBar: some View {
-        VStack {
-            HStack {
-                status.padding()
-            }
-            HStack {
-                newGame
-                Spacer()
-                dealThreeMoreCards
-            }
+        HStack {
+            newGame
+            Spacer()
+            dealThreeMoreCards
         }
         .padding()
     }
@@ -78,10 +69,11 @@ struct SetGameView: View {
     }
     
     @ViewBuilder
-    private func createCardView(_ card: SetCard) -> some View {
+    private func createCard(_ card: SetCard) -> some View {
         let shouldShake = determineCardShouldShake(card)
         
         CardView(card)
+            .highlight(enabled: card.isChosen)
             .scaleEffect(card.isChosen ? 1.1 : 1)
             .animation(.smooth(duration: 0.25, extraBounce: 0.5), value: card.isChosen)
             .rotationEffect(.degrees(shouldShake ? 7 : 0))
@@ -97,6 +89,24 @@ struct SetGameView: View {
         } else {
             false
         }
+    }
+}
+
+struct Hightlight: ViewModifier {
+    var enabled: Bool
+    
+    func body(content: Content) -> some View {
+        ZStack {
+            content
+                .blur(radius: enabled ? 15 : 0)
+            content
+        }
+    }
+}
+
+extension View {
+    func highlight(enabled: Bool = true) -> some View {
+        modifier(Hightlight(enabled: enabled))
     }
 }
 
