@@ -10,13 +10,12 @@ import Foundation
 class SetGameViewModel: ObservableObject {
     @Published private var setGame = SetGame()
     @Published private(set) var cardsThatShouldShake: IndexSet?
-        
-    var cards: ArraySlice<SetCard> { setGame.deck.prefix(setGame.visibleCardCount) }
-    var matchedCards: [SetCard] { setGame.matchedCards }
-    var score: Int { setGame.score }
     
-    private var maxVisibleCardCount: Int { setGame.deck.count - matchedCards.count }
-    var canDealMoreCards: Bool { setGame.visibleCardCount < maxVisibleCardCount }
+    var cards: [SetCard] { setGame.cardsOnTable }
+    var matchedCards: [SetCard] { setGame.matchedCards }
+    
+    private var maxVisibleCardCount: Int { setGame.deck.count }
+    var canDealMoreCards: Bool { !setGame.deck.isEmpty }
     
     private var shakeTimer: Timer?
     private func startShaking(for cards: IndexSet) {
@@ -29,7 +28,7 @@ class SetGameViewModel: ObservableObject {
             self.cardsThatShouldShake = nil
         }
     }
-
+    
     // MARK: - Intent
     func toggleChosen(_ card: SetCard) {
         if let cardsThatShouldShake = setGame.toggleChosen(card) {

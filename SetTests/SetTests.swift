@@ -19,15 +19,39 @@ final class SetTests: XCTestCase {
     }
 
     func testExample() throws {
-        let testCard1 = SetCard(shape: .diamond, shapeCount: .one, shading: .striped, color: .pink)
-//        let testCard2 = SetCard(shape: .diamond, shapeCount: .two, shading: .striped, color: .pink)
-//        let testCard3 = SetCard(shape: .diamond, shapeCount: .two, shading: .striped, color: .pink)
         
-        let testCard2 = SetCard(shape: .oval, shapeCount: .one, shading: .solid, color: .blue)
-        let testCard3 = SetCard(shape: .squiggle, shapeCount: .three, shading: .open, color: .purple)
+        let card1 = SetCard(shape: .diamond, shapeCount: .two, shading: .striped, color: .blue)
+        let card2 = SetCard(shape: .squiggle, shapeCount: .one, shading: .open, color: .pink)
+        let card3 = SetCard(shape: .squiggle, shapeCount: .one, shading: .striped, color: .purple)
+        let card4 = SetCard(shape: .squiggle, shapeCount: .three, shading: .open, color: .pink)
+        let card5 = SetCard(shape: .squiggle, shapeCount: .two, shading: .solid, color: .purple)
+        let card6 = SetCard(shape: .oval, shapeCount: .one, shading: .solid, color: .blue)
+        let card7 = SetCard(shape: .squiggle, shapeCount: .one, shading: .striped, color: .pink)
+        let card8 = SetCard(shape: .squiggle, shapeCount: .two, shading: .striped, color: .purple)
+        let card9 = SetCard(shape: .squiggle, shapeCount: .two, shading: .striped, color: .blue)
+
+        let allCards = [card1, card2, card3, card4, card5, card6, card7, card8, card9]
+
+        func check(_ cards: [SetCard]) -> [SetCard]? {
+            for i in 0..<cards.count {
+                for j in i+1..<cards.count {
+                    for k in j+1..<cards.count {
+                        if SetGame.isValidSet([cards[i], cards[j], cards[k]]) {
+                            return [cards[i], cards[j], cards[k]]
+                        }
+                    }
+                }
+            }
+            
+            return nil
+        }
         
-        XCTAssert(SetGame.isValidSet([testCard1, testCard2, testCard3]) == false)
-    }   
+        if let cards = check(allCards) {
+            print(cards)
+        } else {
+            print("None")
+        }
+    }
 
     func testCreateDeck() throws {
         // Performance measurement

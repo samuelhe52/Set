@@ -8,39 +8,44 @@
 import Foundation
 
 struct SetGame {
-    var deck: [SetCard] = createDeck()
-    var matchedCards: [SetCard] = []
-    var visibleCardCount: Int = 12
-    private(set) var score: Int = 0
+    private(set) var deck: [SetCard]
+    private(set) var matchedCards: [SetCard] = []
+    private(set) var cardsOnTable: [SetCard]
+    
+    init() {
+        self.deck = SetGame.createDeck()
+        self.matchedCards = []
+        self.cardsOnTable = Array(deck.prefix(12))
+        deck.removeSubrange(0..<12)
+    }
     
     // Returns the indices of cards that failed to form a set, if any.
     mutating func toggleChosen(_ card: SetCard) -> IndexSet? {
-        guard let chosenCardIndex = deck.firstIndex(where: { $0.id == card.id }) else {
-            print("No such card in deck!")
+        guard let chosenCardIndex = cardsOnTable.firstIndex(where: { $0.id == card.id }) else {
+            print("No such card in cardsOnTable!")
             return nil
         }
                 
-        if deck.chosenCardCount < 3 || deck.chosenCards.contains(deck[chosenCardIndex]) {
-            deck[chosenCardIndex].isChosen.toggle()
+        if cardsOnTable.chosenCardCount < 3 || cardsOnTable.chosenCards.contains(cardsOnTable[chosenCardIndex]) {
+            cardsOnTable[chosenCardIndex].isChosen.toggle()
             
-            switch deck.chosenCardCount {
+            switch cardsOnTable.chosenCardCount {
             case 3:
                 defer {
-                    deck.chosenCardIndices.forEach { index in
-                        deck[index].isChosen = false
+                    cardsOnTable.chosenCardIndices.forEach { index in
+                        cardsOnTable[index].isChosen = false
                     }
                 }
                 
-                if deck.chosenCards.isValidSet {
-                    print("Matched: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
+                if cardsOnTable.chosenCards.isValidSet {
+                    print("Matched: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
                     
-                    matchedCards.append(contentsOf: deck.chosenCards)
-                    deck.remove(atOffsets: deck.chosenCardIndices)
-                    visibleCardCount -= 3
-                    score += 1
+                    matchedCards.append(contentsOf: cardsOnTable.chosenCards)
+                    cardsOnTable.remove(atOffsets: cardsOnTable.chosenCardIndices)
+                    dealThreeMoreCards()
                 } else {
-                    print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    return deck.chosenCardIndices
+                    print("Match failed: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
+                    return cardsOnTable.chosenCardIndices
                 }
             default:
                 break
@@ -53,7 +58,10 @@ struct SetGame {
     }
     
     mutating func dealThreeMoreCards() {
-        visibleCardCount = min(visibleCardCount + 3, deck.count - matchedCards.count)
+        cardsOnTable.append(contentsOf: deck.prefix(3))
+        if deck.count >= 3 {
+            deck.removeSubrange(0..<3)
+        }
     }
         
     // MARK: - static methods
@@ -70,7 +78,7 @@ struct SetGame {
             }
         }
         
-        return tmpDeck.shuffled()
+        return tmpDeck
     }
     
     static func isValidSet(_ cards: [SetCard]) -> Bool {
@@ -90,7 +98,7 @@ struct SetGame {
     }
 }
 
-extension Array where Element == SetCard {
+extension Sequence where Element == SetCard {
     var chosenCards: [SetCard] { self.lazy.filter { $0.isChosen } }
     var chosenCardCount: Int { chosenCards.count }
     var chosenCardIndices: IndexSet {
