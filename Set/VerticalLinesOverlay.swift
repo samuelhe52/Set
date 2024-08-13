@@ -23,22 +23,6 @@ struct VerticalLinesShape: Shape {
     }
 }
 
-struct VerticalLinesOverlay<S: Shape>: ViewModifier {
-    var shape: S
-    var lineWidth: CGFloat = 2
-    var lineSpacing: CGFloat = 15
-    
-    func body(content: Content) -> some View {
-        content.overlay {
-            VerticalLinesShape(lineSpacing: lineSpacing)
-                .stroke(lineWidth: lineWidth)
-                .mask {
-                    shape
-                }
-        }
-    }
-}
-
 extension Shape {
     func verticalLinesOverlay(lineWidth: CGFloat = 2, lineSpacing: CGFloat = 15) -> some View {
         let base = VerticalLinesShape(lineSpacing: lineSpacing).stroke(lineWidth: lineWidth)

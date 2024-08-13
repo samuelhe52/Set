@@ -13,6 +13,7 @@
 		9F04A3BF2C39989000EB4DE6 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F04A3BE2C39989000EB4DE6 /* SetGame.swift */; };
 		9F1850052C399DFF001AAD49 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1850042C399DFF001AAD49 /* CardView.swift */; };
 		9F1DD0012C58DFD0002FBD71 /* SetGameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DD0002C58DFD0002FBD71 /* SetGameViewModel.swift */; };
+		9F3958672C6B68D600DF290B /* FluidGradientOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3958662C6B68D600DF290B /* FluidGradientOverlay.swift */; };
 		9F54A7B72C58F3EA00E5A251 /* SetUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F54A7B62C58F3EA00E5A251 /* SetUITests.swift */; };
 		9F54A7B92C58F3EA00E5A251 /* SetUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F54A7B82C58F3EA00E5A251 /* SetUITestsLaunchTests.swift */; };
 		9F6C7A212C68FFAE00FE456D /* FluidGradient in Frameworks */ = {isa = PBXBuildFile; productRef = 9F6C7A202C68FFAE00FE456D /* FluidGradient */; };
@@ -52,6 +53,7 @@
 		9F04A3BE2C39989000EB4DE6 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 		9F1850042C399DFF001AAD49 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		9F1DD0002C58DFD0002FBD71 /* SetGameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameViewModel.swift; sourceTree = "<group>"; };
+		9F3958662C6B68D600DF290B /* FluidGradientOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluidGradientOverlay.swift; sourceTree = "<group>"; };
 		9F54A7B42C58F3EA00E5A251 /* SetUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F54A7B62C58F3EA00E5A251 /* SetUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUITests.swift; sourceTree = "<group>"; };
 		9F54A7B82C58F3EA00E5A251 /* SetUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				9F7057432C3152E60068EC81 /* SetApp.swift */,
 				9F04A3A52C39735300EB4DE6 /* BrightnessGradient.swift */,
 				9F7057452C3152E60068EC81 /* SetGameView.swift */,
+				9F3958662C6B68D600DF290B /* FluidGradientOverlay.swift */,
 				9FED59C02C58FC91009DA150 /* AspectVGrid.swift */,
 				9F1DD0002C58DFD0002FBD71 /* SetGameViewModel.swift */,
 				9F04A3A32C39604200EB4DE6 /* SetShapes.swift */,
@@ -312,6 +315,7 @@
 				9F04A3A62C39735300EB4DE6 /* BrightnessGradient.swift in Sources */,
 				9F04A3BF2C39989000EB4DE6 /* SetGame.swift in Sources */,
 				9FED59C12C58FC91009DA150 /* AspectVGrid.swift in Sources */,
+				9F3958672C6B68D600DF290B /* FluidGradientOverlay.swift in Sources */,
 				9F7057442C3152E60068EC81 /* SetApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

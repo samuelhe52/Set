@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import FluidGradient
 
 struct SetGameView: View {
     @ObservedObject var setGameVM: SetGameViewModel
@@ -32,7 +31,7 @@ struct SetGameView: View {
                 }
                 .padding(8)
         }
-        .animation(.easeInOut(duration: 0.4), value: setGameVM.cards)
+        .animation(.spring(duration: 0.3), value: setGameVM.cards)
         .padding()
     }
     
@@ -104,15 +103,7 @@ struct SetGameView: View {
             setGameVM.giveHint()
         }) {
             Text("Hint")
-        }
-    }
-    
-    @ViewBuilder
-    func fluidGradient(color: Color, speed: Double = 0.3) -> some View {
-        let colors: [Color] = [color.lightened(strength: 1), color, color.lightened(strength: 0.5)]
-        
-        FluidGradient(blobs: colors,
-                      speed: speed)
+        }.disabled(setGameVM.hintShown)
     }
     
     @ViewBuilder
@@ -121,12 +112,10 @@ struct SetGameView: View {
         let base = CardView(card)
         let baseColor = base.baseColor
         base
-            .overlay {
-                fluidGradient(color: baseColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .blur(radius: 5)
-                    .opacity((card.showHint) ? 1 : 0)
-            }
+            .fluidGradientOverlay(
+                        color: baseColor,
+                        clipShape: RoundedRectangle(cornerRadius: 15),
+                        isVisible: card.showHint)
             .scaleEffect(card.isChosen ? 1.1 : 1)
             .animation(.easeInOut(duration: 0.2), value: card.showHint)
             .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)

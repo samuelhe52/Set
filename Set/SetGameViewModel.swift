@@ -16,6 +16,7 @@ class SetGameViewModel: ObservableObject {
     var gameOver: Bool { setGame.gameOver }
     var gameStart: Date = Date()
     var timeTaken: TimeInterval?
+    var hintShown: Bool { !cards.filter { $0.showHint }.isEmpty }
     
     private var maxVisibleCardCount: Int { setGame.deck.count }
     var canDealMoreCards: Bool { !setGame.deck.isEmpty }
