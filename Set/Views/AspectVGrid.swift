@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where Items.Element: Identifiable {
+struct AspectVGrid<
+    Items: RandomAccessCollection,
+    ItemView: View
+>: View where Items.Element: Identifiable {
     var items: Items
     var aspectRatio: CGFloat = 1
     var minWidth: CGFloat
@@ -33,7 +36,10 @@ struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where It
                 if scrolling {
                     if #available(iOS 16.0, *) {
                         ScrollView {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth),
+                                                         spacing: 0)],
+                                      spacing: 0
+                            ) {
                                 ForEach(items) { item in
                                     contentBuilder(item)
                                         .aspectRatio(aspectRatio, contentMode: .fill)
@@ -42,7 +48,10 @@ struct AspectVGrid<Items: RandomAccessCollection, ItemView: View>: View where It
                         }.scrollIndicators(.never)
                     } else {
                         ScrollView(showsIndicators: false) {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth),
+                                                         spacing: 0)],
+                                      spacing: 0
+                            ) {
                                 ForEach(items) { item in
                                     contentBuilder(item)
                                         .aspectRatio(aspectRatio, contentMode: .fill)

@@ -29,32 +29,51 @@ extension Color {
         var alpha: CGFloat = 0.0
         
         let uiColor = UIColor(col)
-        uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        uiColor.getHue(&hue,
+                       saturation: &saturation,
+                       brightness: &brightness,
+                       alpha: &alpha)
         
         return (hue, saturation, brightness, alpha)
     }
     
     var lighter: Color {
         let baseHSB = getHSB(self)
-        return Color(hue: baseHSB.0, saturation: baseHSB.1, brightness: baseHSB.2 + 0.4, opacity: baseHSB.3)
+        return Color(hue: baseHSB.0,
+                     saturation: baseHSB.1,
+                     brightness: baseHSB.2 + 0.4,
+                     opacity: baseHSB.3)
     }
     
     func lightened(strength: Double) -> Color {
         let baseHSB = getHSB(self)
-        return Color(hue: baseHSB.0, saturation: baseHSB.1, brightness: baseHSB.2 + strength, opacity: baseHSB.3)
+        return Color(hue: baseHSB.0,
+                     saturation: baseHSB.1,
+                     brightness: baseHSB.2 + strength,
+                     opacity: baseHSB.3)
     }
     
     var darker: Color {
         let baseHSB = getHSB(self)
-        return Color(hue: baseHSB.0, saturation: baseHSB.1, brightness: baseHSB.2 - 0.4, opacity: baseHSB.3)
+        return Color(hue: baseHSB.0,
+                     saturation: baseHSB.1,
+                     brightness: baseHSB.2 - 0.4,
+                     opacity: baseHSB.3)
     }
     
     func darkened(strength: Double) -> Color {
         let baseHSB = getHSB(self)
-        return Color(hue: baseHSB.0, saturation: baseHSB.1, brightness: baseHSB.2 - strength, opacity: baseHSB.3)
+        return Color(hue: baseHSB.0,
+                     saturation: baseHSB.1,
+                     brightness: baseHSB.2 - strength,
+                     opacity: baseHSB.3)
     }
 }
 
 #Preview("Brightness Gradient") {
-    RoundedRectangle(cornerRadius: 20).fill(.linearGradient(Color.blue.brightnessGradient, startPoint: .topTrailing, endPoint: .bottomLeading)).frame(width: 300, height: 400)
+    RoundedRectangle(cornerRadius: 20)
+        .fill(.linearGradient(Color.blue.brightnessGradient,
+                            startPoint: .topTrailing,
+                            endPoint: .bottomLeading))
+        .frame(width: 300, height: 400)
 }

@@ -21,16 +21,16 @@ struct SetGame {
         deck.removeSubrange(0..<12)
     }
     
-    // Returns the indices of cards that failed to form a set, if any.
+    /// - Returns: The indices of cards that failed to form a set, if any.
     mutating func toggleChosen(_ card: SetCard) -> IndexSet? {
         guard let chosenCardIndex = cardsOnTable.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in cardsOnTable!")
             return nil
         }
                 
-        if cardsOnTable.chosenCardCount < 3 || cardsOnTable.chosenCards.contains(cardsOnTable[chosenCardIndex]) {
+        if cardsOnTable.chosenCardCount < 3 ||
+            cardsOnTable.chosenCards.contains(cardsOnTable[chosenCardIndex]) {
             cardsOnTable[chosenCardIndex].isChosen.toggle()
-            
             switch cardsOnTable.chosenCardCount {
             case 3:
                 defer {
@@ -66,7 +66,7 @@ struct SetGame {
         }
     }
     
-    /// The returned boolean indicates whether there is a valid set on screen.
+    ///  - Returns: Returns `false` if there is no valid set on screen, otherwise returns `true`.
     mutating func giveHint() -> Bool {
         if let validSetIndices = SetGame.findSet(in: cardsOnTable) {
             for index in validSetIndices {
@@ -86,7 +86,10 @@ struct SetGame {
             for cardShape in SetCard.CardShape.allCases {
                 for shading in SetCard.CardShading.allCases {
                     for color in SetCard.CardColor.allCases {
-                        tmpDeck.append(SetCard(shape: cardShape, shapeCount: number, shading: shading, color: color))
+                        tmpDeck.append(SetCard(shape: cardShape,
+                                               shapeCount: number,
+                                               shading: shading,
+                                               color: color))
                     }
                 }
             }
@@ -105,10 +108,18 @@ struct SetGame {
         }
         
         return
-            allSameOrAllDifferent(a: cards[0].color, b: cards[1].color, c: cards[2].color) &&
-            allSameOrAllDifferent(a: cards[0].shading, b: cards[1].shading, c: cards[2].shading) &&
-            allSameOrAllDifferent(a: cards[0].shape, b: cards[1].shape, c: cards[2].shape) &&
-            allSameOrAllDifferent(a: cards[0].shapeCount, b: cards[1].shapeCount, c: cards[2].shapeCount)
+            allSameOrAllDifferent(a: cards[0].color,
+                                  b: cards[1].color,
+                                  c: cards[2].color) &&
+            allSameOrAllDifferent(a: cards[0].shading,
+                                  b: cards[1].shading,
+                                  c: cards[2].shading) &&
+            allSameOrAllDifferent(a: cards[0].shape,
+                                  b: cards[1].shape,
+                                  c: cards[2].shape) &&
+            allSameOrAllDifferent(a: cards[0].shapeCount,
+                                  b: cards[1].shapeCount,
+                                  c: cards[2].shapeCount)
 //        return true
     }
     
@@ -127,7 +138,6 @@ struct SetGame {
 }
 
 struct SetCard: Identifiable, CustomStringConvertible {
-    // card properties declaration
     private(set) var shape: CardShape
     private(set) var shapeCount: ShapeCount
     private(set) var shading: CardShading
@@ -184,7 +194,6 @@ struct SetCard: Identifiable, CustomStringConvertible {
     }
 }
 
-// Equatable conformation
 extension SetCard: Equatable {
     static func ==(lhs: SetCard, rhs: SetCard) -> Bool {
         return

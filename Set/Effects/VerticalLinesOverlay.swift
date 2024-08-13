@@ -24,7 +24,10 @@ struct VerticalLinesShape: Shape {
 }
 
 extension Shape {
-    func verticalLinesOverlay(lineWidth: CGFloat = 2, lineSpacing: CGFloat = 15) -> some View {
+    func verticalLinesOverlay(
+        lineWidth: CGFloat = 2,
+        lineSpacing: CGFloat = 15
+    ) -> some View {
         let base = VerticalLinesShape(lineSpacing: lineSpacing).stroke(lineWidth: lineWidth)
         return ZStack {
             self.stroke(lineWidth: lineWidth)

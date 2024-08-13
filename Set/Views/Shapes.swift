@@ -62,7 +62,8 @@ struct Squiggle: Shape {
         let transform = CGAffineTransform(scaleX: scale, y: scale)
         path = path.applying(transform)
         pathRect = path.boundingRect
-        path = path.offsetBy(dx: rect.midX - pathRect.midX, dy: rect.minY - pathRect.minY)
+        path = path.offsetBy(dx: rect.midX - pathRect.midX,
+                             dy: rect.minY - pathRect.minY)
 
         return path
     }
@@ -73,7 +74,9 @@ struct Oval: Shape {
     func path(in rect: CGRect) -> Path {
         let cornerRadius = rect.height / 2
         var path = Path()
-        path.addRoundedRect(in: rect, cornerSize: CGSize(width: cornerRadius, height: cornerRadius))
+        path.addRoundedRect(in: rect,
+                            cornerSize: CGSize(width: cornerRadius,
+                                               height: cornerRadius))
         return path
     }
 }
