@@ -1,5 +1,5 @@
 //
-//  shakeEffect.swift
+//  ShakeEffect.swift
 //  Set
 //
 //  Created by Samuel He on 2024/8/13.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct shakeEffect: ViewModifier {
+struct ShakeEffect: ViewModifier {
     var singleShakeDuration: TimeInterval = 0.06
     
     @State var shouldShake: Bool
@@ -28,7 +28,7 @@ extension View {
     func shakeEffect(singleShakeDuration: TimeInterval = 0.06,
                     shouldShake: Bool
     ) -> some View {
-        modifier(shakeEffect(singleShakeDuration: singleShakeDuration,
+        modifier(ShakeEffect(singleShakeDuration: singleShakeDuration,
                                   shouldShake: shouldShake))
     }
 }

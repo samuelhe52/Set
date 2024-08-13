@@ -59,6 +59,7 @@
 			membershipExceptions = (
 				BrightnessGradient.swift,
 				FluidGradientOverlay.swift,
+				ShakeEffect.swift,
 				VerticalLinesOverlay.swift,
 			);
 			target = 9F70573F2C3152E60068EC81 /* Set */;
