@@ -14,15 +14,14 @@ struct SetGame {
     var gameOver: Bool { deck.isEmpty && cardsOnTable.isEmpty }
     
     init() {
-//        self.deck = Array(SetGame.createDeck().prefix(12))
         self.deck = SetGame.createDeck()
         self.matchedCards = []
         self.cardsOnTable = Array(deck.prefix(12))
         deck.removeSubrange(0..<12)
     }
     
-    /// - Returns: The indices of cards that failed to form a set, if any.
-    mutating func toggleChosen(_ card: SetCard) -> IndexSet? {
+    /// - Returns: The UUIDs of cards that failed to form a set, if any.
+    mutating func toggleChosen(_ card: SetCard) -> Set<UUID>? {
         guard let chosenCardIndex = cardsOnTable.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in cardsOnTable!")
             return nil
@@ -47,7 +46,7 @@ struct SetGame {
                     dealThreeMoreCards()
                 } else {
                     print("Match failed: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    return cardsOnTable.chosenCardIndices
+                    return Set(cardsOnTable.chosenCards.map { $0.id })
                 }
             default:
                 break
@@ -63,18 +62,6 @@ struct SetGame {
         cardsOnTable.append(contentsOf: deck.prefix(3))
         if deck.count >= 3 {
             deck.removeSubrange(0..<3)
-        }
-    }
-    
-    ///  - Returns: Returns `false` if there is no valid set on screen, otherwise returns `true`.
-    mutating func giveHint() -> Bool {
-        if let validSetIndices = SetGame.findSet(in: cardsOnTable) {
-            for index in validSetIndices {
-                cardsOnTable[index].showHint = true
-            }
-            return true
-        } else {
-            return false
         }
     }
         
@@ -120,87 +107,19 @@ struct SetGame {
             allSameOrAllDifferent(a: cards[0].shapeCount,
                                   b: cards[1].shapeCount,
                                   c: cards[2].shapeCount)
-//        return true
     }
     
-    static func findSet(in cards: [SetCard]) -> IndexSet? {
+    static func findSet(in cards: [SetCard]) -> Set<UUID>? {
         for i in 0..<cards.count {
             for j in i+1..<cards.count {
                 for k in j+1..<cards.count {
                     if SetGame.isValidSet([cards[i], cards[j], cards[k]]) {
-                        return [i, j, k]
+                        return Set([cards[i].id, cards[j].id, cards[k].id])
                     }
                 }
             }
         }
         return nil
-    }
-}
-
-struct SetCard: Identifiable, CustomStringConvertible {
-    private(set) var shape: CardShape
-    private(set) var shapeCount: ShapeCount
-    private(set) var shading: CardShading
-    private(set) var color: CardColor
-    
-    var isChosen: Bool = false
-    var showHint: Bool = false
-    
-    var id: UUID = UUID()
-    var description: String { "A card with \(shapeCount.rawValue) \(color.description) \(shading.description) \(shape.description)(s)" }
-        
-    // MARK: - Enums for card properties
-    
-    enum CardShape: CustomStringConvertible, CaseIterable, Identifiable {
-        case diamond, squiggle, oval
-        
-        var description: String {
-            switch self {
-            case .diamond: "diamond"
-            case .squiggle: "squiggle"
-            case .oval: "oval"
-            }
-        }
-        
-        var id: String { self.description }
-    }
-
-    enum ShapeCount: Int, CaseIterable {
-        case one = 1, two, three
-    }
-
-    enum CardShading: CustomStringConvertible, CaseIterable {
-        case solid, striped, open
-        
-        var description: String {
-            switch self {
-            case .solid: "solid"
-            case .striped: "striped"
-            case .open: "open"
-            }
-        }
-    }
-    
-    enum CardColor: CustomStringConvertible, CaseIterable {
-        case purple, pink, blue
-        
-        var description: String {
-            switch self {
-            case .purple: "purple"
-            case .pink: "pink"
-            case .blue: "blue"
-            }
-        }
-    }
-}
-
-extension SetCard: Equatable {
-    static func ==(lhs: SetCard, rhs: SetCard) -> Bool {
-        return
-            lhs.color == rhs.color &&
-            lhs.shading == rhs.shading &&
-            lhs.shape == rhs.shape &&
-            lhs.shapeCount == rhs.shapeCount
     }
 }
 

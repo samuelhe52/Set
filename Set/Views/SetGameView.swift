@@ -11,7 +11,7 @@ struct SetGameView: View {
     @ObservedObject var setGameVM: SetGameViewModel
     /// If no set is on screen, show an alert, telling user to deal 3 more cards.
     @State var noSetOnScreen: Bool = false
-    @State var shakingCardsIndices: IndexSet?
+    @State var shakingCardIDs: Set<UUID>?
     @State var shakeTimer: Timer?
 
     var body: some View {
@@ -31,13 +31,18 @@ struct SetGameView: View {
                     minWidth: 80) { card in
             createCard(card)
                 .onTapGesture {
-                    if let shouldShakeCardIndices = setGameVM.toggleChosen(card) {
-                        startShaking(for: shouldShakeCardIndices)
+                    if let shouldShakeCardIDs = setGameVM.toggleChosen(card) {
+                        startShaking(for: shouldShakeCardIDs)
                     }
                 }
                 .padding(8)
         }
         .animation(.spring(duration: 0.3), value: setGameVM.cards)
+        .transition(
+            .opacity
+            .combined(with: .scale)
+            .animation(.smooth(duration: 0.4))
+        )
         .padding()
     }
     
@@ -115,34 +120,33 @@ struct SetGameView: View {
     
     var hint: some View {
         Button(action: {
+            /// `giveHint()` returns false here, so we set the `noSetScreen` var to true.
+            ///  Also, `giveHint()` will add IDs for cards that form a set into `setGameVM.hintCardIDs`
             if !setGameVM.giveHint() { noSetOnScreen.toggle() }
         }) {
             Text("Hint")
         }
         .disabled(setGameVM.hintShown)
-        .alert("There is no set on screen!",
+        .alert("No set on screen!",
                isPresented: $noSetOnScreen,
                actions: {
-            Button(action: {
-                setGameVM.dealThreeMoreCards()
-            }) {
-                Text("3 More Cards")
-            }
+            Button(role: .cancel, action: {}) { Text("Cancel") }
+            dealThreeMoreCards
         })
     }
     
     @ViewBuilder
     private func createCard(_ card: SetCard) -> some View {
-        let shaking = determineShaking(of: card)
+        let shaking = determineShaking(for: card)
         let base = CardView(card)
         let baseColor = base.baseColor
         base
             .fluidGradientOverlay(
                         color: baseColor,
                         clipShape: RoundedRectangle(cornerRadius: 15),
-                        isVisible: card.showHint)
+                        isVisible: determineShowHint(for: card))
             .scaleEffect(card.isChosen ? 1.1 : 1)
-            .animation(.easeInOut(duration: 0.2), value: card.showHint)
+            .animation(.easeInOut(duration: 0.2), value: determineShowHint(for: card))
             .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
             .rotationEffect(.degrees(shaking ? 7 : 0))
             .animation(
@@ -151,22 +155,30 @@ struct SetGameView: View {
             )
     }
     
-    private func determineShaking(of card: SetCard) -> Bool {
-        if let shakingCardsIndices {
-            shakingCardsIndices.contains(setGameVM.cards.firstIndex(of: card) ?? -1)
+    private func determineShowHint(for card: SetCard) -> Bool {
+        if let hintCardIDs = setGameVM.hintCardIDs {
+            hintCardIDs.contains(card.id)
         } else {
             false
         }
     }
     
-    private func startShaking(for cards: IndexSet) {
+    private func determineShaking(for card: SetCard) -> Bool {
+        if let shakingCardIDs {
+            shakingCardIDs.contains(card.id)
+        } else {
+            false
+        }
+    }
+    
+    private func startShaking(for cards: Set<UUID>) {
         // Cancel any existing timer
         shakeTimer?.invalidate()
         // Set the cards to shake
-        shakingCardsIndices = cards
+        shakingCardIDs = cards
         // After 0.2 seconds, cancel shaking
         shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
-            shakingCardsIndices = nil
+            shakingCardIDs = nil
         }
     }
 }

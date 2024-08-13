@@ -9,6 +9,7 @@ import Foundation
 
 class SetGameViewModel: ObservableObject {
     @Published private var setGame = SetGame()
+    @Published var hintCardIDs: Set<UUID>?
     
     var cards: [SetCard] { setGame.cardsOnTable }
     var matchedCards: [SetCard] { setGame.matchedCards }
@@ -16,18 +17,19 @@ class SetGameViewModel: ObservableObject {
     var gameStart: Date = Date()
     // The time taken for a whole game.
     var timeTaken: TimeInterval?
-    var hintShown: Bool { !cards.filter { $0.showHint }.isEmpty }
-    
+    var hintShown: Bool {
+        !Set(cards.map { $0.id })
+            .intersection(hintCardIDs ?? [])
+            .isEmpty
+    }
+        
     private var maxVisibleCardCount: Int { setGame.deck.count }
     var canDealMoreCards: Bool { !setGame.deck.isEmpty }
     
     // MARK: - Intent
     
-    /// - Returns: The indices of cards that failed to form a set, if any.
-    func toggleChosen(_ card: SetCard) -> IndexSet? {
-        if gameOver {
-            timeTaken = Date().timeIntervalSince(gameStart)
-        }
+    /// - Returns: The UUIDs of cards that failed to form a set, if any.
+    func toggleChosen(_ card: SetCard) -> Set<UUID>? {
         return setGame.toggleChosen(card)
     }
     
@@ -41,7 +43,13 @@ class SetGameViewModel: ObservableObject {
     }
     
     ///  - Returns: Returns `false` if there is no valid set on screen, otherwise returns `true`.
+    ///  - Adds UUIDs of the cards that form a set into `hintCardIDs`, if any.
     func giveHint() -> Bool {
-        return setGame.giveHint()
+        if let validSetCardIDs = SetGame.findSet(in: cards) {
+            hintCardIDs = validSetCardIDs
+            return true
+        } else {
+            return false
+        }
     }
 }
