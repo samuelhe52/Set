@@ -27,8 +27,8 @@ struct SetGameView: View {
     
     var cards: some View {
         AspectVGrid(items: setGameVM.cards,
-                    aspectRatio: 5/7,
-                    minWidth: 80) { card in
+                    aspectRatio: Constants.Card.aspectRatio,
+                    minWidth: Constants.Card.minWidth) { card in
             createCard(card)
                 .onTapGesture {
                     if let shouldShakeCardIDs = setGameVM.toggleChosen(card) {
@@ -87,7 +87,7 @@ struct SetGameView: View {
             .animation(.smooth(duration: 0.4))
         )
     }
-    
+    // TODO: Make transition working
     var bottomBar: some View {
         HStack {
             newGame
@@ -145,12 +145,15 @@ struct SetGameView: View {
                         color: baseColor,
                         clipShape: RoundedRectangle(cornerRadius: 15),
                         isVisible: determineShowHint(for: card))
-            .scaleEffect(card.isChosen ? 1.1 : 1)
+            .scaleEffect(card.isChosen ? Constants.Card.chosenCardScaleFactor : 1)
             .animation(.easeInOut(duration: 0.2), value: determineShowHint(for: card))
             .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
-            .rotationEffect(.degrees(shaking ? 7 : 0))
+            .rotationEffect(.degrees(shaking ? Constants.Shake.intensity * 10 : 0))
             .animation(
-                shaking ? .easeInOut(duration: 0.06).repeatForever() : .default,
+                shaking ?
+                    .easeInOut(duration: Constants.Shake.singleShakeDuration)
+                    .repeatForever() :
+                        .default,
                 value: shaking
             )
     }
@@ -177,8 +180,22 @@ struct SetGameView: View {
         // Set the cards to shake
         shakingCardIDs = cards
         // After 0.2 seconds, cancel shaking
-        shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
+        shakeTimer = Timer.scheduledTimer(withTimeInterval: Constants.Shake.duration, repeats: false) { _ in
             shakingCardIDs = nil
+        }
+    }
+    
+    struct Constants {
+        struct Card {
+            static let aspectRatio: CGFloat = 5/7
+            static let minWidth: CGFloat = 80
+            static let chosenCardScaleFactor: CGFloat = 1.1
+        }
+        // The rotation angle used in the shake effect, divided by 10.
+        struct Shake {
+            static let intensity: CGFloat = 0.7
+            static let singleShakeDuration: TimeInterval = 0.06
+            static let duration: TimeInterval = 0.2
         }
     }
 }
