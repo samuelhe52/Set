@@ -11,7 +11,18 @@ struct SetGame {
     private(set) var deck: [SetCard]
     private(set) var matchedCards: [SetCard] = []
     private(set) var cardsOnTable: [SetCard]
-    var gameOver: Bool { deck.isEmpty && cardsOnTable.isEmpty }
+    var gameOver: Bool {
+        if deck.isEmpty && cardsOnTable.isEmpty {
+            return true
+        /// It has been mathematically proven that the maximum number of
+        /// cards in a group in which no set exists is 20, so we use it as a
+        /// threshold to avoid unnecassary computation.
+        } else if (cardsOnTable.count + deck.count) <= 20 {
+            return SetGame.findSet(in: (cardsOnTable + deck)) == nil
+        } else {
+            return false
+        }
+    }
     
     init() {
         self.deck = SetGame.createDeck()
