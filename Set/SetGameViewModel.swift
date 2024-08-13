@@ -50,4 +50,10 @@ class SetGameViewModel: ObservableObject {
     func dealThreeMoreCards() {
         setGame.dealThreeMoreCards()
     }
+    
+    func giveHint() {
+        if !setGame.giveHint() {
+            dealThreeMoreCards()
+        }
+    }
 }

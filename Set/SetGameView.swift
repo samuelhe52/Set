@@ -39,33 +39,43 @@ struct SetGameView: View {
     var status: some View {
         Group {
             if setGameVM.gameOver {
-                VStack {
-                    Text("🎉 Game Over 🎉")
-                        .font(.largeTitle)
-                        .padding()
-                    Text("Time Taken: \(setGameVM.timeTaken ?? 0, specifier: "%.2f") seconds")
-                        .font(.title3)
-                }
-                .foregroundStyle(.purple)
-                .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))
+                gameOverScreen
             } else {
-                Text("Matched: \(setGameVM.matchedCards.count) / 81")
-                    .font(.title3)
-                    .background {
-                        RoundedRectangle(cornerRadius: 10)
-                            .scale(1.2)
-                            .fill(.blue.lighter)
-                            .opacity(0.7)
-                    }
-                    .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))            }
+                matchedCardCount
+            }
         }
-        .animation(.easeInOut, value: setGameVM.gameOver)
+    }
+    
+    var matchedCardCount: some View {
+        Text("Matched: \(setGameVM.matchedCards.count) / 81")
+            .font(.title3)
+            .background {
+                RoundedRectangle(cornerRadius: 10)
+                    .scale(1.2)
+                    .fill(.blue.lighter)
+                    .opacity(0.7)
+            }
+            .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))
+    }
+    
+    var gameOverScreen: some View {
+        VStack {
+            Text("🎉 Game Over 🎉")
+                .font(.largeTitle)
+                .padding()
+            Text("Time Taken: \(setGameVM.timeTaken ?? 0, specifier: "%.2f") seconds")
+                .font(.title3)
+        }
+        .foregroundStyle(.purple)
+        .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))
     }
     
     var bottomBar: some View {
         HStack {
             newGame
             if !setGameVM.gameOver {
+                Spacer()
+                hint
                 Spacer()
                 dealThreeMoreCards
             }
@@ -83,10 +93,18 @@ struct SetGameView: View {
     }
     
     var dealThreeMoreCards: some View {
-        Button(action: { setGameVM.dealThreeMoreCards() }, label: {
+        Button(action: { setGameVM.dealThreeMoreCards() }) {
             Text("3 More Cards")
-        })
+        }
         .disabled(!setGameVM.canDealMoreCards)
+    }
+    
+    var hint: some View {
+        Button(action: {
+            setGameVM.giveHint()
+        }) {
+            Text("Hint")
+        }
     }
     
     @ViewBuilder
@@ -107,9 +125,10 @@ struct SetGameView: View {
                 fluidGradient(color: baseColor)
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .blur(radius: 5)
-                    .opacity(card.isChosen ? 1 : 0)
+                    .opacity((card.showHint) ? 1 : 0)
             }
             .scaleEffect(card.isChosen ? 1.1 : 1)
+            .animation(.easeInOut(duration: 0.2), value: card.showHint)
             .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
             .rotationEffect(.degrees(shouldShake ? 7 : 0))
             .animation(
@@ -124,24 +143,6 @@ struct SetGameView: View {
         } else {
             false
         }
-    }
-}
-
-struct Hightlight: ViewModifier {
-    var enabled: Bool
-    
-    func body(content: Content) -> some View {
-        ZStack {
-            content
-                .blur(radius: enabled ? 15 : 0)
-            content
-        }
-    }
-}
-
-extension View {
-    func highlight(enabled: Bool = true) -> some View {
-        modifier(Hightlight(enabled: enabled))
     }
 }
 

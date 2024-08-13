@@ -65,6 +65,18 @@ struct SetGame {
             deck.removeSubrange(0..<3)
         }
     }
+    
+    /// The returned boolean indicates whether there is a valid set on screen.
+    mutating func giveHint() -> Bool {
+        if let validSetIndices = SetGame.findSet(in: cardsOnTable) {
+            for index in validSetIndices {
+                cardsOnTable[index].showHint = true
+            }
+            return true
+        } else {
+            return false
+        }
+    }
         
     // MARK: - static methods
     private static func createDeck() -> [SetCard]{
@@ -98,6 +110,19 @@ struct SetGame {
             allSameOrAllDifferent(a: cards[0].shape, b: cards[1].shape, c: cards[2].shape) &&
             allSameOrAllDifferent(a: cards[0].shapeCount, b: cards[1].shapeCount, c: cards[2].shapeCount)
 //        return true
+    }
+    
+    static func findSet(in cards: [SetCard]) -> IndexSet? {
+        for i in 0..<cards.count {
+            for j in i+1..<cards.count {
+                for k in j+1..<cards.count {
+                    if SetGame.isValidSet([cards[i], cards[j], cards[k]]) {
+                        return [i, j, k]
+                    }
+                }
+            }
+        }
+        return nil
     }
 }
 
