@@ -13,11 +13,13 @@ struct SetGameView: View {
 
     var body: some View {
         VStack {
-            cards
-            Spacer()
+            if !setGameVM.gameOver {
+                cards
+            }
             status
             bottomBar
         }
+        .preferredColorScheme(.dark)
     }
     
     var cards: some View {
@@ -35,22 +37,40 @@ struct SetGameView: View {
     }
     
     var status: some View {
-        Text("Matched: \(setGameVM.matchedCards.count) / 81")
-            .font(.title3)
-            .background {
-                RoundedRectangle(cornerRadius: 10)
-                    .scale(1.2)
-                    .fill(.blue.lighter)
-                    .opacity(0.7)
-            }
+        Group {
+            if setGameVM.gameOver {
+                VStack {
+                    Text("🎉 Game Over 🎉")
+                        .font(.largeTitle)
+                        .padding()
+                    Text("Time Taken: \(setGameVM.timeTaken ?? 0, specifier: "%.2f") seconds")
+                        .font(.title3)
+                }
+                .foregroundStyle(.purple)
+                .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))
+            } else {
+                Text("Matched: \(setGameVM.matchedCards.count) / 81")
+                    .font(.title3)
+                    .background {
+                        RoundedRectangle(cornerRadius: 10)
+                            .scale(1.2)
+                            .fill(.blue.lighter)
+                            .opacity(0.7)
+                    }
+                    .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))            }
+        }
+        .animation(.easeInOut, value: setGameVM.gameOver)
     }
     
     var bottomBar: some View {
         HStack {
             newGame
-            Spacer()
-            dealThreeMoreCards
+            if !setGameVM.gameOver {
+                Spacer()
+                dealThreeMoreCards
+            }
         }
+        .animation(.spring(duration: 0.5, bounce: 0.2), value: setGameVM.gameOver)
         .padding()
     }
     
@@ -70,9 +90,8 @@ struct SetGameView: View {
     }
     
     @ViewBuilder
-    func fluidGradient(color: Color) -> some View {
+    func fluidGradient(color: Color, speed: Double = 0.3) -> some View {
         let colors: [Color] = [color.lightened(strength: 1), color, color.lightened(strength: 0.5)]
-        let speed: Double = 0.3
         
         FluidGradient(blobs: colors,
                       speed: speed)

@@ -11,8 +11,10 @@ struct SetGame {
     private(set) var deck: [SetCard]
     private(set) var matchedCards: [SetCard] = []
     private(set) var cardsOnTable: [SetCard]
+    var gameOver: Bool { deck.isEmpty && cardsOnTable.isEmpty }
     
     init() {
+//        self.deck = Array(SetGame.createDeck().prefix(12))
         self.deck = SetGame.createDeck()
         self.matchedCards = []
         self.cardsOnTable = Array(deck.prefix(12))
@@ -95,6 +97,7 @@ struct SetGame {
             allSameOrAllDifferent(a: cards[0].shading, b: cards[1].shading, c: cards[2].shading) &&
             allSameOrAllDifferent(a: cards[0].shape, b: cards[1].shape, c: cards[2].shape) &&
             allSameOrAllDifferent(a: cards[0].shapeCount, b: cards[1].shapeCount, c: cards[2].shapeCount)
+//        return true
     }
 }
 

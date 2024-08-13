@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
 
 struct SetCard: Identifiable, CustomStringConvertible {
     // card properties declaration
@@ -20,7 +19,7 @@ struct SetCard: Identifiable, CustomStringConvertible {
     var id: UUID = UUID()
     var description: String { "A card with \(shapeCount.rawValue) \(color.description) \(shading.description) \(shape.description)(s)" }
         
-    // MARK: - Enumerations for card properties
+    // MARK: - Enums for card properties
     
     enum CardShape: CustomStringConvertible, CaseIterable, Identifiable {
         case diamond, squiggle, oval

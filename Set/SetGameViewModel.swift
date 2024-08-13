@@ -13,6 +13,9 @@ class SetGameViewModel: ObservableObject {
     
     var cards: [SetCard] { setGame.cardsOnTable }
     var matchedCards: [SetCard] { setGame.matchedCards }
+    var gameOver: Bool { setGame.gameOver }
+    var gameStart: Date = Date()
+    var timeTaken: TimeInterval?
     
     private var maxVisibleCardCount: Int { setGame.deck.count }
     var canDealMoreCards: Bool { !setGame.deck.isEmpty }
@@ -23,7 +26,7 @@ class SetGameViewModel: ObservableObject {
         shakeTimer?.invalidate()
         // Set the cards to shake
         self.cardsThatShouldShake = cards
-        // After 0.5 seconds, cancel shaking
+        // After 0.2 seconds, cancel shaking
         shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
             self.cardsThatShouldShake = nil
         }
@@ -34,10 +37,14 @@ class SetGameViewModel: ObservableObject {
         if let cardsThatShouldShake = setGame.toggleChosen(card) {
             startShaking(for: cardsThatShouldShake)
         }
+        if gameOver {
+            timeTaken = Date().timeIntervalSince(gameStart)
+        }
     }
     
     func startNewGame() {
         setGame = SetGame()
+        gameStart = Date()
     }
     
     func dealThreeMoreCards() {
