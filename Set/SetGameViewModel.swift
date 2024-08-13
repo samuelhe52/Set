@@ -9,38 +9,26 @@ import Foundation
 
 class SetGameViewModel: ObservableObject {
     @Published private var setGame = SetGame()
-    @Published private(set) var cardsThatShouldShake: IndexSet?
     
     var cards: [SetCard] { setGame.cardsOnTable }
     var matchedCards: [SetCard] { setGame.matchedCards }
     var gameOver: Bool { setGame.gameOver }
     var gameStart: Date = Date()
+    // The time taken for a whole game.
     var timeTaken: TimeInterval?
     var hintShown: Bool { !cards.filter { $0.showHint }.isEmpty }
     
     private var maxVisibleCardCount: Int { setGame.deck.count }
     var canDealMoreCards: Bool { !setGame.deck.isEmpty }
     
-    private var shakeTimer: Timer?
-    private func startShaking(for cards: IndexSet) {
-        // Cancel any existing timer
-        shakeTimer?.invalidate()
-        // Set the cards to shake
-        self.cardsThatShouldShake = cards
-        // After 0.2 seconds, cancel shaking
-        shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
-            self.cardsThatShouldShake = nil
-        }
-    }
-    
     // MARK: - Intent
-    func toggleChosen(_ card: SetCard) {
-        if let cardsThatShouldShake = setGame.toggleChosen(card) {
-            startShaking(for: cardsThatShouldShake)
-        }
+    
+    /// - Returns: The indices of cards that failed to form a set, if any.
+    func toggleChosen(_ card: SetCard) -> IndexSet? {
         if gameOver {
             timeTaken = Date().timeIntervalSince(gameStart)
         }
+        return setGame.toggleChosen(card)
     }
     
     func startNewGame() {
@@ -52,9 +40,8 @@ class SetGameViewModel: ObservableObject {
         setGame.dealThreeMoreCards()
     }
     
-    func giveHint() {
-        if !setGame.giveHint() {
-            dealThreeMoreCards()
-        }
+    ///  - Returns: Returns `false` if there is no valid set on screen, otherwise returns `true`.
+    func giveHint() -> Bool {
+        return setGame.giveHint()
     }
 }

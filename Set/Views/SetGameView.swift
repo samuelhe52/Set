@@ -9,6 +9,10 @@ import SwiftUI
 
 struct SetGameView: View {
     @ObservedObject var setGameVM: SetGameViewModel
+    /// If no set is on screen, show an alert, telling user to deal 3 more cards.
+    @State var noSetOnScreen: Bool = false
+    @State var shakingCardsIndices: IndexSet?
+    @State var shakeTimer: Timer?
 
     var body: some View {
         VStack {
@@ -27,7 +31,9 @@ struct SetGameView: View {
                     minWidth: 80) { card in
             createCard(card)
                 .onTapGesture {
-                    setGameVM.toggleChosen(card)
+                    if let shouldShakeCardIndices = setGameVM.toggleChosen(card) {
+                        startShaking(for: shouldShakeCardIndices)
+                    }
                 }
                 .padding(8)
         }
@@ -54,7 +60,11 @@ struct SetGameView: View {
                     .fill(.blue.lighter)
                     .opacity(0.7)
             }
-            .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))
+            .transition(
+                .opacity
+                .combined(with: .scale)
+                .animation(.smooth(duration: 0.4))
+            )
     }
     
     var gameOverScreen: some View {
@@ -66,7 +76,11 @@ struct SetGameView: View {
                 .font(.title3)
         }
         .foregroundStyle(.purple)
-        .transition(.opacity.combined(with: .scale).animation(.smooth(duration: 0.4)))
+        .transition(
+            .opacity
+            .combined(with: .scale)
+            .animation(.smooth(duration: 0.4))
+        )
     }
     
     var bottomBar: some View {
@@ -79,7 +93,8 @@ struct SetGameView: View {
                 dealThreeMoreCards
             }
         }
-        .animation(.spring(duration: 0.5, bounce: 0.2), value: setGameVM.gameOver)
+        .animation(.spring(duration: 0.5, bounce: 0.2),
+                   value: setGameVM.gameOver)
         .padding()
     }
     
@@ -100,15 +115,25 @@ struct SetGameView: View {
     
     var hint: some View {
         Button(action: {
-            setGameVM.giveHint()
+            if !setGameVM.giveHint() { noSetOnScreen.toggle() }
         }) {
             Text("Hint")
-        }.disabled(setGameVM.hintShown)
+        }
+        .disabled(setGameVM.hintShown)
+        .alert("There is no set on screen!",
+               isPresented: $noSetOnScreen,
+               actions: {
+            Button(action: {
+                setGameVM.dealThreeMoreCards()
+            }) {
+                Text("3 More Cards")
+            }
+        })
     }
     
     @ViewBuilder
     private func createCard(_ card: SetCard) -> some View {
-        let shouldShake = determineCardShouldShake(card)
+        let shaking = determineShaking(of: card)
         let base = CardView(card)
         let baseColor = base.baseColor
         base
@@ -119,18 +144,29 @@ struct SetGameView: View {
             .scaleEffect(card.isChosen ? 1.1 : 1)
             .animation(.easeInOut(duration: 0.2), value: card.showHint)
             .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
-            .rotationEffect(.degrees(shouldShake ? 7 : 0))
+            .rotationEffect(.degrees(shaking ? 7 : 0))
             .animation(
-                shouldShake ? .easeInOut(duration: 0.06).repeatForever() : .default,
-                value: shouldShake
+                shaking ? .easeInOut(duration: 0.06).repeatForever() : .default,
+                value: shaking
             )
     }
     
-    private func determineCardShouldShake(_ card: SetCard) -> Bool {
-        if let cardsThatShouldShake = setGameVM.cardsThatShouldShake {
-            cardsThatShouldShake.contains(setGameVM.cards.firstIndex(of: card) ?? -1)
+    private func determineShaking(of card: SetCard) -> Bool {
+        if let shakingCardsIndices {
+            shakingCardsIndices.contains(setGameVM.cards.firstIndex(of: card) ?? -1)
         } else {
             false
+        }
+    }
+    
+    private func startShaking(for cards: IndexSet) {
+        // Cancel any existing timer
+        shakeTimer?.invalidate()
+        // Set the cards to shake
+        shakingCardsIndices = cards
+        // After 0.2 seconds, cancel shaking
+        shakeTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { _ in
+            shakingCardsIndices = nil
         }
     }
 }
