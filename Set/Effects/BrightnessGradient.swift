@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+#if os(macOS)
+import AppKit
+#endif
+
 extension Color {
     /// Returns a `Gradient` with the lighter
     /// and the darker versions of the base color as its stops.
@@ -22,19 +26,24 @@ extension Color {
 }
 
 extension Color {
-    private func getHSB(_ col: Color) -> (CGFloat, CGFloat, CGFloat, CGFloat) {
-        var hue: CGFloat = 0.0
-        var saturation: CGFloat = 0.0
-        var brightness: CGFloat = 0.0
-        var alpha: CGFloat = 0.0
+    private func getHSB(_ col: Color) -> (h: CGFloat,
+                                          s: CGFloat,
+                                          b: CGFloat,
+                                          a: CGFloat) {
+        var h: CGFloat = 0
+        var s: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
         
-        let uiColor = UIColor(col)
-        uiColor.getHue(&hue,
-                       saturation: &saturation,
-                       brightness: &brightness,
-                       alpha: &alpha)
+        #if os(macOS)
+        NSColor(col)
+            .usingColorSpace(.sRGB)?
+            .getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        #else
+        UIColor(col).getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        #endif
         
-        return (hue, saturation, brightness, alpha)
+        return (h, s, b, a)
     }
     
     var lighter: Color {
@@ -73,7 +82,7 @@ extension Color {
 #Preview("Brightness Gradient") {
     RoundedRectangle(cornerRadius: 20)
         .fill(.linearGradient(Color.blue.brightnessGradient,
-                            startPoint: .topTrailing,
-                            endPoint: .bottomLeading))
+                              startPoint: .topTrailing,
+                              endPoint: .bottomLeading))
         .frame(width: 300, height: 400)
 }
