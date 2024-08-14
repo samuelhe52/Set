@@ -13,14 +13,20 @@ struct SetGameView: View {
     @State var noSetOnScreen: Bool = false
     @State var shakingCardIDs: Set<UUID>?
     @State var shakeTimer: Timer?
-
+    
     var body: some View {
         VStack {
-            if !setGameVM.gameStatus.gameEnded {
-                cards
-            }
+            cardsWithChoiceAppearance
             status
             bottomBar
+        }
+    }
+    
+    @ViewBuilder
+    var cardsWithChoiceAppearance: some View {
+        if !setGameVM.gameStatus.gameEnded {
+            cards.transition(.opacityScale)
+            // Our transition must go here (inside if clause) for iOS 15 compatibility.
         }
     }
     
@@ -29,28 +35,28 @@ struct SetGameView: View {
                     aspectRatio: Constants.Card.aspectRatio,
                     minWidth: Constants.Card.minWidth) { card in
             createCard(card)
+                .contentShape(Rectangle()) // Ensure macOS users taps normally
                 .onTapGesture {
-                    if let shouldShakeCardIDs = setGameVM.toggleChosen(card) {
-                        startShaking(for: shouldShakeCardIDs)
+                    var shouldShakeCardIDs: Set<UUID>?
+                    withAnimation(.smooth(duration: 0.3, extraBounce: 0.5)) {
+                        shouldShakeCardIDs = setGameVM.toggleChosen(card)
+                    }
+                    if let ids = shouldShakeCardIDs {
+                        startShaking(for: ids)
                     }
                 }
                 .padding(8)
         }
-        .animation(.spring(duration: 0.3), value: setGameVM.cards)
-        .transition(
-            .opacity
-            .combined(with: .scale)
-            .animation(.smooth(duration: 0.4))
-        )
+        .animation(.spring(duration: 0.3), value: setGameVM.cards.map { $0.id })
         .padding()
     }
     
     var status: some View {
         Group {
             if setGameVM.gameStatus.gameEnded {
-                gameOverScreen
+                gameEndedScreen.transition(.opacityScale)
             } else {
-                matchedCardCount
+                matchedCardCount.transition(.opacityScale)
             }
         }
     }
@@ -64,19 +70,14 @@ struct SetGameView: View {
                     .fill(.blue.lighter)
                     .opacity(0.7)
             }
-            .transition(
-                .opacity
-                .combined(with: .scale)
-                .animation(.smooth(duration: 0.4))
-            )
     }
     
     @ViewBuilder
-    var gameOverScreen: some View {
+    var gameEndedScreen: some View {
         let reason = setGameVM.gameStatus.endReason!
         let duration = setGameVM.gameStatus.duration ?? 0
         VStack {
-            Text("🎉 Game Over 🎉")
+            Text("🎉 You've Won! 🎉")
                 .font(.largeTitle)
                 .padding()
             Text("\(reason.description)")
@@ -85,11 +86,6 @@ struct SetGameView: View {
                 .font(.body)
         }
         .foregroundStyle(.purple)
-        .transition(
-            .opacity
-            .combined(with: .scale)
-            .animation(.smooth(duration: 0.4))
-        )
     }
     // It seems that the transition doesn't work on iOS 15...
     var bottomBar: some View {
@@ -100,18 +96,17 @@ struct SetGameView: View {
                 hint
                 Spacer()
                 dealThreeMoreCards
-//                /// For debugging only!!!
+                /// For debugging only!!!
 //                Button(action: { setGameVM.showEndScreen() }, label: { Text("End Game") })
-//                /// For debugging only!!!
+                /// For debugging only!!!
             }
         }
-        .animation(.spring(duration: 0.5, bounce: 0.2),
-                   value: setGameVM.gameStatus.gameEnded)
+        .animation(.spring(duration: 0.4), value: setGameVM.gameStatus.gameEnded)
         .padding()
     }
     
     var newGame: some View {
-        Button(action: { 
+        Button(action: {
             setGameVM.startNewGame()
         }, label: {
             Text("New Game")
@@ -127,19 +122,21 @@ struct SetGameView: View {
     
     var hint: some View {
         Button(action: {
-            /// `giveHint()` returns false here, so we set the `noSetScreen` var to true.
-            ///  Also, `giveHint()` will add IDs for cards that form a set into `setGameVM.hintCardIDs`
-            if !setGameVM.giveHint() { noSetOnScreen.toggle() }
+            withAnimation(.easeInOut(duration: 0.2)) {
+                /// `giveHint()` returns false here, so we set the `noSetScreen` var to true.
+                ///  Also, `giveHint()` will add IDs for cards that form a set into `setGameVM.hintCardIDs`
+                if !setGameVM.giveHint() { noSetOnScreen.toggle() }
+            }
         }) {
             Text("Hint")
         }
         .disabled(setGameVM.hintShown)
-        .alert("No Set On Screen!",
+        .alert("Hint",
                isPresented: $noSetOnScreen,
                actions: {
             Button(role: .cancel, action: {}) { Text("Cancel") }
             dealThreeMoreCards
-        })
+        }, message: { Text("No Set On Screen!") })
     }
     
     @ViewBuilder
@@ -149,12 +146,10 @@ struct SetGameView: View {
         let baseColor = base.baseColor
         base
             .fluidGradientOverlay(
-                        color: baseColor,
-                        clipShape: RoundedRectangle(cornerRadius: 15),
-                        isVisible: determineShowHint(for: card))
+                color: baseColor,
+                clipShape: RoundedRectangle(cornerRadius: 15),
+                isVisible: determineShowHint(for: card))
             .scaleEffect(card.isChosen ? Constants.Card.chosenCardScaleFactor : 1)
-            .animation(.easeInOut(duration: 0.2), value: determineShowHint(for: card))
-            .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
             .shakeEffect(shaking,
                          singleShakeDuration: Constants.Shake.singleShakeDuration)
     }
@@ -200,6 +195,13 @@ struct SetGameView: View {
             static let duration: TimeInterval = 0.2
         }
     }
+}
+
+extension AnyTransition {
+    static let opacityScale = AnyTransition
+        .opacity
+        .combined(with: .scale)
+        .animation(.smooth(duration: 0.4))
 }
 
 #Preview {

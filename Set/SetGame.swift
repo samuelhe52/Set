@@ -70,8 +70,7 @@ struct SetGame {
         if cardsOnTable.chosenCardCount < 3 ||
             cardsOnTable.chosenCards.contains(cardsOnTable[chosenCardIndex]) {
             cardsOnTable[chosenCardIndex].isChosen.toggle()
-            switch cardsOnTable.chosenCardCount {
-            case 3:
+            if cardsOnTable.chosenCardCount == 3 {
                 defer {
                     cardsOnTable.chosenCardIndices.forEach { index in
                         cardsOnTable[index].isChosen = false
@@ -88,8 +87,6 @@ struct SetGame {
                     print("Match failed: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
                     return Set(cardsOnTable.chosenCards.map { $0.id })
                 }
-            default:
-                break
             }
             return nil
         } else {
