@@ -16,7 +16,7 @@ struct SetGameView: View {
 
     var body: some View {
         VStack {
-            if !setGameVM.gameEndStatus.gameEnded {
+            if !setGameVM.gameStatus.gameEnded {
                 cards
             }
             status
@@ -47,7 +47,7 @@ struct SetGameView: View {
     
     var status: some View {
         Group {
-            if setGameVM.gameEndStatus.gameEnded {
+            if setGameVM.gameStatus.gameEnded {
                 gameOverScreen
             } else {
                 matchedCardCount
@@ -73,15 +73,16 @@ struct SetGameView: View {
     
     @ViewBuilder
     var gameOverScreen: some View {
-        let reason = setGameVM.gameEndStatus.reason!
+        let reason = setGameVM.gameStatus.endReason!
+        let duration = setGameVM.gameStatus.duration ?? 0
         VStack {
             Text("🎉 Game Over 🎉")
                 .font(.largeTitle)
                 .padding()
             Text("\(reason.description)")
                 .font(.title2)
-            Text("Time Taken: \(setGameVM.timeTaken ?? 0, specifier: "%.2f") seconds")
-                .font(.title3)
+            Text("Time Taken: \(duration, specifier: "%.2f") seconds")
+                .font(.body)
         }
         .foregroundStyle(.purple)
         .transition(
@@ -94,15 +95,18 @@ struct SetGameView: View {
     var bottomBar: some View {
         HStack {
             newGame
-            if !setGameVM.gameEndStatus.gameEnded {
+            if !setGameVM.gameStatus.gameEnded {
                 Spacer()
                 hint
                 Spacer()
                 dealThreeMoreCards
+//                /// For debugging only!!!
+//                Button(action: { setGameVM.showEndScreen() }, label: { Text("End Game") })
+//                /// For debugging only!!!
             }
         }
         .animation(.spring(duration: 0.5, bounce: 0.2),
-                   value: setGameVM.gameEndStatus.gameEnded)
+                   value: setGameVM.gameStatus.gameEnded)
         .padding()
     }
     
@@ -177,7 +181,8 @@ struct SetGameView: View {
         // Set the cards to shake
         shakingCardIDs = cards
         // After 0.2 seconds, cancel shaking
-        shakeTimer = Timer.scheduledTimer(withTimeInterval: Constants.Shake.duration, repeats: false) { _ in
+        shakeTimer = Timer.scheduledTimer(withTimeInterval: Constants.Shake.duration,
+                                          repeats: false) { _ in
             shakingCardIDs = nil
         }
     }

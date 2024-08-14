@@ -14,16 +14,37 @@ class SetGameViewModel: ObservableObject {
     var cards: [SetCard] { setGame.cardsOnTable }
     var matchedCards: [SetCard] { setGame.matchedCards }
     
-    var gameEndStatus: SetGame.GameEndStatus {
-        if setGame.gameEndStatus.gameEnded {
-            timeTaken = Date().timeIntervalSince(gameStart)
+    private var gameStartTime: Date = Date()
+    private var gameEndTime: Date?
+    
+    var gameStatus: GameStatus {
+        var duration: TimeInterval?
+        let status = setGame.gameStatus
+        if status.gameEnded {
+            if gameEndTime == nil {
+                gameEndTime = Date()
+            }
+            duration = gameEndTime?.timeIntervalSince(gameStartTime)
         }
-        return setGame.gameEndStatus
+        return GameStatus(
+            status: status,
+            duration: duration
+        )
     }
     
-    var gameStart: Date = Date()
-    // The time taken for a whole game.
-    var timeTaken: TimeInterval?
+    struct GameStatus {
+        private let status: SetGame.GameStatus
+        
+        var gameEnded: Bool { status.gameEnded }
+        let duration: TimeInterval?
+        var endReason: SetGame.GameStatus.GameEndReason? { status.reason }
+        
+        init(status: SetGame.GameStatus, duration: TimeInterval?) {
+            self.status = status
+            self.duration = duration
+        }
+    }
+    
     var hintShown: Bool {
         !Set(cards.map { $0.id })
             .intersection(hintCardIDs ?? [])
@@ -42,7 +63,8 @@ class SetGameViewModel: ObservableObject {
     
     func startNewGame() {
         setGame = SetGame()
-        gameStart = Date()
+        gameStartTime = Date()
+        gameEndTime = nil
     }
     
     func dealThreeMoreCards() {
@@ -59,4 +81,10 @@ class SetGameViewModel: ObservableObject {
             return false
         }
     }
+    
+    /// For debugging only!!!
+    func showEndScreen() {
+        setGame.endGame()
+    }
+    /// For debugging only!!!
 }

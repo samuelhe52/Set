@@ -12,24 +12,24 @@ struct SetGame {
     private(set) var matchedCards: [SetCard] = []
     private(set) var cardsOnTable: [SetCard]
     
-    var gameEndStatus: GameEndStatus {
+    var gameStatus: GameStatus {
         if deck.isEmpty && cardsOnTable.isEmpty {
-            return GameEndStatus(ended: true, reason: .allCardsMatched)
+            return GameStatus(ended: true, reason: .allCardsMatched)
         /// It has been mathematically proven that the maximum number of
         /// cards in a group in which no set exists is 20, so we use it as a
         /// threshold to avoid unnecassary computation.
         } else if (cardsOnTable.count + deck.count) <= 20 {
             if SetGame.findSet(in: (cardsOnTable + deck)) == nil {
-                return GameEndStatus(ended: true, reason: .noSetFound)
+                return GameStatus(ended: true, reason: .noSetFound)
             } else {
-                return GameEndStatus(ended: false, reason: .none)
+                return GameStatus(ended: false, reason: .none)
             }
         } else {
-            return GameEndStatus(ended: false, reason: .none)
+            return GameStatus(ended: false, reason: .none)
         }
     }
     
-    struct GameEndStatus {
+    struct GameStatus {
         var gameEnded: Bool
         var reason: GameEndReason?
         
@@ -104,6 +104,15 @@ struct SetGame {
             deck.removeSubrange(0..<3)
         }
     }
+    
+    /// For debugging only!!!
+    mutating func endGame() {
+        matchedCards.append(contentsOf: cardsOnTable)
+        matchedCards.append(contentsOf: deck)
+        cardsOnTable.removeAll()
+        deck.removeAll()
+    }
+    /// For debugging only!!!
         
     // MARK: - static methods
     private static func createDeck() -> [SetCard]{
