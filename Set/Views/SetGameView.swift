@@ -16,7 +16,7 @@ struct SetGameView: View {
 
     var body: some View {
         VStack {
-            if !setGameVM.gameOver {
+            if !setGameVM.gameEndStatus.gameEnded {
                 cards
             }
             status
@@ -47,7 +47,7 @@ struct SetGameView: View {
     
     var status: some View {
         Group {
-            if setGameVM.gameOver {
+            if setGameVM.gameEndStatus.gameEnded {
                 gameOverScreen
             } else {
                 matchedCardCount
@@ -71,11 +71,15 @@ struct SetGameView: View {
             )
     }
     
+    @ViewBuilder
     var gameOverScreen: some View {
+        let reason = setGameVM.gameEndStatus.reason!
         VStack {
             Text("🎉 Game Over 🎉")
                 .font(.largeTitle)
                 .padding()
+            Text("\(reason.description)")
+                .font(.title2)
             Text("Time Taken: \(setGameVM.timeTaken ?? 0, specifier: "%.2f") seconds")
                 .font(.title3)
         }
@@ -90,7 +94,7 @@ struct SetGameView: View {
     var bottomBar: some View {
         HStack {
             newGame
-            if !setGameVM.gameOver {
+            if !setGameVM.gameEndStatus.gameEnded {
                 Spacer()
                 hint
                 Spacer()
@@ -98,7 +102,7 @@ struct SetGameView: View {
             }
         }
         .animation(.spring(duration: 0.5, bounce: 0.2),
-                   value: setGameVM.gameOver)
+                   value: setGameVM.gameEndStatus.gameEnded)
         .padding()
     }
     

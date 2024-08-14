@@ -11,16 +11,45 @@ struct SetGame {
     private(set) var deck: [SetCard]
     private(set) var matchedCards: [SetCard] = []
     private(set) var cardsOnTable: [SetCard]
-    var gameOver: Bool {
+    
+    var gameEndStatus: GameEndStatus {
         if deck.isEmpty && cardsOnTable.isEmpty {
-            return true
+            return GameEndStatus(ended: true, reason: .allCardsMatched)
         /// It has been mathematically proven that the maximum number of
         /// cards in a group in which no set exists is 20, so we use it as a
         /// threshold to avoid unnecassary computation.
         } else if (cardsOnTable.count + deck.count) <= 20 {
-            return SetGame.findSet(in: (cardsOnTable + deck)) == nil
+            if SetGame.findSet(in: (cardsOnTable + deck)) == nil {
+                return GameEndStatus(ended: true, reason: .noSetFound)
+            } else {
+                return GameEndStatus(ended: false, reason: .none)
+            }
         } else {
-            return false
+            return GameEndStatus(ended: false, reason: .none)
+        }
+    }
+    
+    struct GameEndStatus {
+        var gameEnded: Bool
+        var reason: GameEndReason?
+        
+        init(ended gameEnded: Bool, reason: GameEndReason? = nil) {
+            self.gameEnded = gameEnded
+            self.reason = reason
+        }
+        
+        enum GameEndReason: CustomStringConvertible {
+            case noSetFound
+            case allCardsMatched
+            
+            var description: String {
+                switch self {
+                case .noSetFound:
+                    return "No more set on screen"
+                case .allCardsMatched:
+                    return "All cards matched"
+                }
+            }
         }
     }
     

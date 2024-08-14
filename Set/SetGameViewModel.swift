@@ -13,12 +13,14 @@ class SetGameViewModel: ObservableObject {
     
     var cards: [SetCard] { setGame.cardsOnTable }
     var matchedCards: [SetCard] { setGame.matchedCards }
-    var gameOver: Bool {
-        if setGame.gameOver {
+    
+    var gameEndStatus: SetGame.GameEndStatus {
+        if setGame.gameEndStatus.gameEnded {
             timeTaken = Date().timeIntervalSince(gameStart)
-            return true
-        } else { return false }
+        }
+        return setGame.gameEndStatus
     }
+    
     var gameStart: Date = Date()
     // The time taken for a whole game.
     var timeTaken: TimeInterval?
