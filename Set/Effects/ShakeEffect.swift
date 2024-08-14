@@ -8,25 +8,28 @@
 import SwiftUI
 
 struct ShakeEffect: ViewModifier {
-    var singleShakeDuration: TimeInterval = 0.06
-    
-    @State var shaking: Bool
-    
+    var shaking: Bool
+    var singleShakeDuration: TimeInterval
+        
     func body(content: Content) -> some View {
-        return content
+        content
             .rotationEffect(.degrees(shaking ? 7 : 0))
             .animation(
-                shaking ? .easeInOut(duration: 0.06).repeatForever() : .default,
-                value: shaking
-            )
+                shaking ?
+                .easeInOut(duration: singleShakeDuration)
+                .repeatForever() :
+                        .default,
+                       value: shaking)
     }
 }
 
 extension View {
-    func shakeEffect(singleShakeDuration: TimeInterval = 0.06,
-                     shaking: Bool
+    func shakeEffect(_ shaking: Bool,
+                     singleShakeDuration: TimeInterval = 0.06
     ) -> some View {
-        modifier(ShakeEffect(singleShakeDuration: singleShakeDuration,
-                             shaking: shaking))
+        modifier(
+            ShakeEffect(shaking: shaking,
+                        singleShakeDuration: singleShakeDuration)
+        )
     }
 }

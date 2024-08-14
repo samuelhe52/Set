@@ -22,7 +22,6 @@ struct SetGameView: View {
             status
             bottomBar
         }
-        .preferredColorScheme(.dark)
     }
     
     var cards: some View {
@@ -87,7 +86,7 @@ struct SetGameView: View {
             .animation(.smooth(duration: 0.4))
         )
     }
-    // TODO: Make transition working
+    // It seems that the transition doesn't work on iOS 15...
     var bottomBar: some View {
         HStack {
             newGame
@@ -127,7 +126,7 @@ struct SetGameView: View {
             Text("Hint")
         }
         .disabled(setGameVM.hintShown)
-        .alert("No set on screen!",
+        .alert("No Set On Screen!",
                isPresented: $noSetOnScreen,
                actions: {
             Button(role: .cancel, action: {}) { Text("Cancel") }
@@ -148,14 +147,8 @@ struct SetGameView: View {
             .scaleEffect(card.isChosen ? Constants.Card.chosenCardScaleFactor : 1)
             .animation(.easeInOut(duration: 0.2), value: determineShowHint(for: card))
             .animation(.smooth(duration: 0.3, extraBounce: 0.5), value: card.isChosen)
-            .rotationEffect(.degrees(shaking ? Constants.Shake.intensity * 10 : 0))
-            .animation(
-                shaking ?
-                    .easeInOut(duration: Constants.Shake.singleShakeDuration)
-                    .repeatForever() :
-                        .default,
-                value: shaking
-            )
+            .shakeEffect(shaking,
+                         singleShakeDuration: Constants.Shake.singleShakeDuration)
     }
     
     private func determineShowHint(for card: SetCard) -> Bool {
@@ -191,8 +184,8 @@ struct SetGameView: View {
             static let minWidth: CGFloat = 80
             static let chosenCardScaleFactor: CGFloat = 1.1
         }
-        // The rotation angle used in the shake effect, divided by 10.
         struct Shake {
+            // The rotation angle used in the shake effect, divided by 10.
             static let intensity: CGFloat = 0.7
             static let singleShakeDuration: TimeInterval = 0.06
             static let duration: TimeInterval = 0.2
