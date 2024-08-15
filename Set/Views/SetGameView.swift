@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  SetGameView.swift
 //  Set
 //
 //  Created by Samuel He on 2024/6/30.
@@ -11,7 +11,7 @@ struct SetGameView: View {
     @ObservedObject var setGameVM: SetGameViewModel
     /// If no set is on screen, show an alert, telling user to deal 3 more cards.
     @State var noSetOnScreen: Bool = false
-    @State var shakingCardIDs: Set<UUID>?
+    @State var shakingCardIDs: Set<SetCard.ID>?
     @State var shakeTimer: Timer?
     
     var body: some View {
@@ -37,7 +37,7 @@ struct SetGameView: View {
             createCard(card)
                 .contentShape(Rectangle()) // Ensure macOS users taps normally
                 .onTapGesture {
-                    var shouldShakeCardIDs: Set<UUID>?
+                    var shouldShakeCardIDs: Set<SetCard.ID>?
                     withAnimation(.smooth(duration: 0.3, extraBounce: 0.5)) {
                         shouldShakeCardIDs = setGameVM.toggleChosen(card)
                     }
@@ -170,7 +170,7 @@ struct SetGameView: View {
         }
     }
     
-    private func startShaking(for cards: Set<UUID>) {
+    private func startShaking(for cards: Set<SetCard.ID>) {
         // Cancel any existing timer
         shakeTimer?.invalidate()
         // Set the cards to shake

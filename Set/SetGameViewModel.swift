@@ -9,7 +9,7 @@ import Foundation
 
 class SetGameViewModel: ObservableObject {
     @Published private var setGame = SetGame()
-    @Published var hintCardIDs: Set<UUID>?
+    @Published var hintCardIDs: Set<SetCard.ID>?
     
     var cards: [SetCard] { setGame.cardsOnTable }
     var matchedCards: [SetCard] { setGame.matchedCards }
@@ -56,8 +56,8 @@ class SetGameViewModel: ObservableObject {
     
     // MARK: - Intent
     
-    /// - Returns: The UUIDs of cards that failed to form a set, if any.
-    func toggleChosen(_ card: SetCard) -> Set<UUID>? {
+    /// - Returns: The IDs of cards that failed to form a set, if any.
+    func toggleChosen(_ card: SetCard) -> Set<SetCard.ID>? {
         return setGame.toggleChosen(card)
     }
     
@@ -72,7 +72,7 @@ class SetGameViewModel: ObservableObject {
     }
     
     ///  - Returns: Returns `false` if there is no valid set on screen, otherwise returns `true`.
-    ///  - Adds UUIDs of the cards that form a set into `hintCardIDs`, if any.
+    ///  - Adds IDs of the cards that form a set into `hintCardIDs`, if any.
     func giveHint() -> Bool {
         if let validSetCardIDs = SetGame.findSet(in: cards) {
             hintCardIDs = validSetCardIDs

@@ -60,8 +60,8 @@ struct SetGame {
         deck.removeSubrange(0..<12)
     }
     
-    /// - Returns: The UUIDs of cards that failed to form a set, if any.
-    mutating func toggleChosen(_ card: SetCard) -> Set<UUID>? {
+    /// - Returns: The IDs of cards that failed to form a set, if any.
+    mutating func toggleChosen(_ card: SetCard) -> Set<SetCard.ID>? {
         guard let chosenCardIndex = cardsOnTable.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in cardsOnTable!")
             return nil
@@ -155,7 +155,7 @@ struct SetGame {
                                   c: cards[2].shapeCount)
     }
     
-    static func findSet(in cards: [SetCard]) -> Set<UUID>? {
+    static func findSet(in cards: [SetCard]) -> Set<SetCard.ID>? {
         for i in 0..<cards.count {
             for j in i+1..<cards.count {
                 for k in j+1..<cards.count {
