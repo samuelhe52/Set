@@ -19,76 +19,72 @@ struct AspectVGrid<
     
     var body: some View {
         GeometryReader { geometry in
-            let columnCount = properColumnCount(
+            let (columnCount, scrolling) = properColumnCount(
                 itemCount: items.count,
-                totalWidth: geometry.size.width,
+                size: geometry.size,
+                aspectRatio: aspectRatio,
                 minWidth: minWidth,
                 allRowsFilled: allRowsFilled
             )
             
             let itemWidth = geometry.size.width / CGFloat(columnCount)
-            let itemHeight = itemWidth / aspectRatio
-            let rowCount = (CGFloat(items.count) / CGFloat(columnCount)).rounded(.up)
             
-            let scrolling = rowCount * itemHeight > geometry.size.height
+            let base = LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
+                ForEach(items) { item in
+                    contentBuilder(item)
+                        .aspectRatio(aspectRatio, contentMode: .fill)
+                }
+            }
             
             return Group {
                 if scrolling {
                     if #available(iOS 16.0, *) {
                         ScrollView {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth),
-                                                         spacing: 0)],
-                                      spacing: 0
-                            ) {
-                                ForEach(items) { item in
-                                    contentBuilder(item)
-                                        .aspectRatio(aspectRatio, contentMode: .fill)
-                                }
-                            }
+                            base
                         }.scrollIndicators(.never)
                     } else {
                         ScrollView(showsIndicators: false) {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth),
-                                                         spacing: 0)],
-                                      spacing: 0
-                            ) {
-                                ForEach(items) { item in
-                                    contentBuilder(item)
-                                        .aspectRatio(aspectRatio, contentMode: .fill)
-                                }
-                            }
+                            base
                         }
                     }
                 } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
-                        ForEach(items) { item in
-                            contentBuilder(item)
-                                .aspectRatio(aspectRatio, contentMode: .fill)
-                        }
-                    }
+                    base
                 }
             }
             
         }
     }
     
-    func properColumnCount(
+    /// - Returns: The first element of the tuple is the preferred column count;
+    /// The second, a bool, indicates if the curretn layout requires scrolling.
+    private func properColumnCount(
         itemCount: Int,
-        totalWidth: CGFloat,
+        size: CGSize,
+        aspectRatio: CGFloat,
         minWidth: CGFloat = 0,
         allRowsFilled: Bool = false
-    ) -> Int {
-        var columnCount = min(itemCount, Int(totalWidth / minWidth))
+    ) -> (Int, Bool) {
+        let totalWidth = size.width
+        let visibleHeight = size.height
         
-        while columnCount > 0 {
+        guard itemCount > 0 else { return (1, false) }
+        var columnCount = 0
+        
+        var scrolling: Bool = false
+        
+        repeat {
+            let rowCount = (CGFloat(itemCount) / CGFloat(columnCount)).rounded(.up)
             let itemWidth = totalWidth / CGFloat(columnCount)
+            let itemHeight = itemWidth / aspectRatio
+            scrolling = rowCount * itemHeight > visibleHeight
             
-            if itemWidth >= minWidth && (!allRowsFilled || itemCount % columnCount == 0) {
+            if !scrolling && (!allRowsFilled || itemCount % columnCount == 0) {
                 break
             }
-            columnCount -= 1
-        }
-        return columnCount
+            columnCount += 1
+        } while columnCount < Int((totalWidth / minWidth).rounded(.down))
+                
+        return (columnCount, scrolling)
     }
 }
 
