@@ -54,7 +54,7 @@ struct AspectVGrid<
     }
     
     /// - Returns: The first element of the tuple is the preferred width;
-    /// The second, a bool, indicates if the curretn layout requires scrolling.
+    /// The second, a bool, indicates if the current layout requires scrolling.
     private func properWidth(
         itemCount: Int,
         size: CGSize,
@@ -62,23 +62,20 @@ struct AspectVGrid<
         minWidth: CGFloat = 0,
         allRowsFilled: Bool = false
     ) -> (CGFloat, Bool) {
-        guard itemCount > 0 else { return (1, false) }
+        guard itemCount > 0 else { return (minWidth, false) }
 
         let totalWidth = size.width
         let visibleHeight = size.height
         let maxColumns = max(Int((totalWidth / minWidth).rounded(.down)), 1)
-                
-        var scrolling: Bool = false
-        
+                        
         for columnCount in 1...maxColumns {
             let rowCount = (CGFloat(itemCount) / CGFloat(columnCount)).rounded(.up)
             let itemWidth = totalWidth / CGFloat(columnCount)
             let itemHeight = itemWidth / aspectRatio
-            scrolling = rowCount * itemHeight > visibleHeight
             
+            let scrolling = rowCount * itemHeight > visibleHeight
             if !scrolling && (!allRowsFilled || itemCount % columnCount == 0) {
-                // A width that satisfy the minWidth and not scrolling
-                // is found, so we return the width and not scrolling.
+                // A width that satisfy the minWidth and not scrolling is found
                 return (itemWidth, false)
             }
         }
