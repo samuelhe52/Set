@@ -80,7 +80,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9F3958682C6B74A000DF290B /* CutomViews_Effects */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9F3958692C6B74A000DF290B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CutomViews_Effects; sourceTree = "<group>"; };
+		9F3958682C6B74A000DF290B /* CustomViews_Effects */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9F3958692C6B74A000DF290B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CustomViews_Effects; sourceTree = "<group>"; };
 		9F39586A2C6B754500DF290B /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9F39586B2C6B754500DF290B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -150,7 +150,7 @@
 				9F04A3BE2C39989000EB4DE6 /* SetGame.swift */,
 				9FF80C7C2C6BC3A3009F1625 /* SetCard.swift */,
 				9F39586A2C6B754500DF290B /* Views */,
-				9F3958682C6B74A000DF290B /* CutomViews_Effects */,
+				9F3958682C6B74A000DF290B /* CustomViews_Effects */,
 				9F7057472C3152E70068EC81 /* Assets.xcassets */,
 				9F7057492C3152E70068EC81 /* Set.entitlements */,
 				9F70574A2C3152E70068EC81 /* Preview Content */,
