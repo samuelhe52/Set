@@ -17,32 +17,13 @@ class SetGameViewModel: ObservableObject {
     private var gameStartTime: Date = Date()
     private var gameEndTime: Date?
     
-    var gameStatus: GameStatus {
-        var duration: TimeInterval?
-        let status = setGame.gameStatus
-        if status.gameEnded {
-            if gameEndTime == nil {
-                gameEndTime = Date()
-            }
-            duration = gameEndTime?.timeIntervalSince(gameStartTime)
+    var gameStatus: (gameEnded: Bool, duration: TimeInterval?, endReason: SetGame.GameEndReason?) {
+        if gameEndTime == nil && setGame.gameStatus.gameEnded {
+            gameEndTime = Date()
         }
-        return GameStatus(
-            status: status,
-            duration: duration
-        )
-    }
-    
-    struct GameStatus {
-        private let status: SetGame.GameStatus
+        let duration = gameEndTime?.timeIntervalSince(gameStartTime)
         
-        var gameEnded: Bool { status.gameEnded }
-        let duration: TimeInterval?
-        var endReason: SetGame.GameStatus.GameEndReason? { status.reason }
-        
-        init(status: SetGame.GameStatus, duration: TimeInterval?) {
-            self.status = status
-            self.duration = duration
-        }
+        return (setGame.gameStatus.gameEnded, duration, setGame.gameStatus.endReason)
     }
     
     var hintShown: Bool {
@@ -57,7 +38,7 @@ class SetGameViewModel: ObservableObject {
     // MARK: - Intent
     
     /// - Returns: The IDs of cards that failed to form a set, if any.
-    func toggleChosen(_ card: SetCard) -> Set<SetCard.ID>? {
+    func toggleChosen(_ card: SetCard) -> (shouldShake: Bool, ids: Set<SetCard.ID>?) {
         return setGame.toggleChosen(card)
     }
     

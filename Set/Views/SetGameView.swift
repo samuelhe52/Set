@@ -10,9 +10,7 @@ import SwiftUI
 struct SetGameView: View {
     @ObservedObject var setGameVM: SetGameViewModel
     /// If no set is on screen, show an alert, telling user to deal 3 more cards.
-    @State var noSetOnScreen: Bool = false
-    @State var shakingCardIDs: Set<SetCard.ID>?
-    @State var shakeTimer: Timer?
+    @State private var noSetOnScreen: Bool = false
     
     var body: some View {
         VStack {
@@ -35,29 +33,29 @@ struct SetGameView: View {
                     aspectRatio: Constants.Card.aspectRatio,
                     minWidth: Constants.Card.minWidth) { card in
             createCard(card)
-                .contentShape(Rectangle()) // Ensure macOS users taps normally
-                .onTapGesture {
-                    var shouldShakeCardIDs: Set<SetCard.ID>?
-                    withAnimation(.smooth(duration: 0.3, extraBounce: 0.5)) {
-                        shouldShakeCardIDs = setGameVM.toggleChosen(card)
-                    }
-                    if let ids = shouldShakeCardIDs {
-                        startShaking(for: ids)
-                    }
-                }
+                .contentShape(Rectangle()) // Ensure macOS users tap normally
+                .onTapGesture { toggleChosen(card) }
                 .padding(8)
         }
         .animation(.spring(duration: 0.3), value: setGameVM.cards.map { $0.id })
         .padding()
     }
     
+    private func toggleChosen(_ card: SetCard) {
+        let result = withAnimation(.smooth(duration: 0.3, extraBounce: 0.5)) {
+            setGameVM.toggleChosen(card)
+        }
+        if result.shouldShake {
+            startShaking(for: result.ids)
+        }
+    }
+    
+    @ViewBuilder
     var status: some View {
-        Group {
-            if setGameVM.gameStatus.gameEnded {
-                gameEndedScreen.transition(.opacityScale)
-            } else {
-                remainingCardCount.transition(.opacityScale)
-            }
+        if setGameVM.gameStatus.gameEnded {
+            gameEndedScreen.transition(.opacityScale)
+        } else {
+            remainingCardCount.transition(.opacityScale)
         }
     }
     
@@ -74,20 +72,20 @@ struct SetGameView: View {
     
     @ViewBuilder
     var gameEndedScreen: some View {
-        let reason = setGameVM.gameStatus.endReason!
+        let reason = setGameVM.gameStatus.endReason
         let duration = setGameVM.gameStatus.duration ?? 0
         VStack {
             Text("🎉 You've Won! 🎉")
                 .font(.largeTitle)
                 .padding()
-            Text("\(reason.description)")
+            Text("\(reason?.description ?? "")")
                 .font(.title2)
             Text("Time Taken: \(duration, specifier: "%.2f") seconds")
                 .font(.body)
         }
         .foregroundStyle(.purple)
     }
-    // It seems that the transition doesn't work on iOS 15...
+
     var bottomBar: some View {
         HStack {
             newGame
@@ -162,23 +160,26 @@ struct SetGameView: View {
         }
     }
     
+    @State private var shakingCardIDs: Set<SetCard.ID>?
+    @State private var shakeTimer: Timer?
+    
     private func determineShaking(for card: SetCard) -> Bool {
         if let shakingCardIDs {
             shakingCardIDs.contains(card.id)
-        } else {
-            false
-        }
+        } else { false }
     }
     
-    private func startShaking(for cards: Set<SetCard.ID>) {
-        // Cancel any existing timer
-        shakeTimer?.invalidate()
-        // Set the cards to shake
-        shakingCardIDs = cards
-        // After 0.2 seconds, cancel shaking
-        shakeTimer = Timer.scheduledTimer(withTimeInterval: Constants.Shake.duration,
-                                          repeats: false) { _ in
-            shakingCardIDs = nil
+    private func startShaking(for cardIDs: Set<SetCard.ID>?) {
+        if let cardIDs {
+            // Cancel any existing timer
+            shakeTimer?.invalidate()
+            // Set the cards to shake
+            shakingCardIDs = cardIDs
+            // After 0.2 seconds, cancel shaking
+            shakeTimer = Timer.scheduledTimer(withTimeInterval: Constants.Shake.duration,
+                                              repeats: false) { _ in
+                shakingCardIDs = nil
+            }
         }
     }
     

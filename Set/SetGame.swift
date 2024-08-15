@@ -12,43 +12,33 @@ struct SetGame {
     private(set) var discardedCards: [SetCard] = []
     private(set) var cardsOnTable: [SetCard]
     
-    var gameStatus: GameStatus {
+    var gameStatus: (gameEnded: Bool, endReason: GameEndReason?) {
         if deck.isEmpty && cardsOnTable.isEmpty {
-            return GameStatus(ended: true, reason: .allCardsMatched)
+            return (true, endReason: .allCardsMatched)
         /// It has been mathematically proven that the maximum number of
         /// cards in a group in which no set exists is 20, so we use it as a
         /// threshold to avoid unnecassary computation.
         } else if (cardsOnTable.count + deck.count) <= 20 {
             if SetGame.findSet(in: (cardsOnTable + deck)) == nil {
-                return GameStatus(ended: true, reason: .noSetFound)
+                return (gameEnded: true, endReason: .noSetFound)
             } else {
-                return GameStatus(ended: false, reason: .none)
+                return (gameEnded: false, endReason: .none)
             }
         } else {
-            return GameStatus(ended: false, reason: .none)
+            return (gameEnded: false, endReason: .none)
         }
     }
-    
-    struct GameStatus {
-        var gameEnded: Bool
-        var reason: GameEndReason?
         
-        init(ended gameEnded: Bool, reason: GameEndReason? = nil) {
-            self.gameEnded = gameEnded
-            self.reason = reason
-        }
+    enum GameEndReason: CustomStringConvertible {
+        case noSetFound
+        case allCardsMatched
         
-        enum GameEndReason: CustomStringConvertible {
-            case noSetFound
-            case allCardsMatched
-            
-            var description: String {
-                switch self {
-                case .noSetFound:
-                    return "No more set on screen"
-                case .allCardsMatched:
-                    return "All cards matched"
-                }
+        var description: String {
+            switch self {
+            case .noSetFound:
+                return "No more set on screen"
+            case .allCardsMatched:
+                return "All cards matched"
             }
         }
     }
@@ -61,10 +51,10 @@ struct SetGame {
     }
     
     /// - Returns: The IDs of cards that failed to form a set, if any.
-    mutating func toggleChosen(_ card: SetCard) -> Set<SetCard.ID>? {
+    mutating func toggleChosen(_ card: SetCard) -> (shouldShake: Bool, ids: Set<SetCard.ID>?) {
         guard let chosenCardIndex = cardsOnTable.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in cardsOnTable!")
-            return nil
+            return (false, nil)
         }
                 
         if cardsOnTable.chosenCardCount < 3 ||
@@ -85,13 +75,13 @@ struct SetGame {
                     dealThreeMoreCards()
                 } else {
                     print("Match failed: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    return Set(cardsOnTable.chosenCards.map { $0.id })
+                    return (true, Set(cardsOnTable.chosenCards.map { $0.id }))
                 }
             }
-            return nil
+            return (false, nil)
         } else {
             print("No more than 3 cards can be chosen.")
-            return nil
+            return (false, nil)
         }
     }
     
