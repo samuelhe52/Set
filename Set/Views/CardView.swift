@@ -45,11 +45,12 @@ struct CardView: View {
     }
     
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
+        GeometryReader { geometry in
+            let cornerRadius = geometry.size.width * 0.27
+            RoundedRectangle(cornerRadius: cornerRadius)
                 .stroke(LinearGradient(gradient: baseColor.lighter.brightnessGradient,
                                        startPoint: .topTrailing,
-                                       endPoint: .bottomLeading), 
+                                       endPoint: .bottomLeading),
                         lineWidth: 3.5)
                 .aspectRatio(5/7, contentMode: .fit)
                 .overlay(alignment: .center) {
@@ -57,14 +58,18 @@ struct CardView: View {
                         ForEach(0..<shapeCount, id: \.self) { _ in
                             cardShape
                                 .aspectRatio(5/3, contentMode: .fit)
-                                .foregroundStyle(LinearGradient(gradient: baseColor.lighter.brightnessGradient(contrast: 0.3),
-                                                                startPoint: .topTrailing,
-                                                                endPoint: .bottomLeading))
+                                .foregroundStyle(LinearGradient(
+                                    gradient: baseColor.lighter.brightnessGradient(contrast: 0.3),
+                                    startPoint: .topTrailing,
+                                    endPoint: .bottomLeading))
                         }
                     }
-                    .padding()
+                    .scaleEffect(CGSize(width: 0.65, height: 0.65), anchor: .center)
                 }
         }
+        // We use an .aspectRatio() modifier here to ensure the GeometryReader
+        // doesn't meddle with out layout by taking up all available space.
+        .aspectRatio(5/7, contentMode: .fit)
     }
 }
 
