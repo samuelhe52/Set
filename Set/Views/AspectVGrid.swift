@@ -19,16 +19,14 @@ struct AspectVGrid<
     
     var body: some View {
         GeometryReader { geometry in
-            let (columnCount, scrolling) = properColumnCount(
+            let (itemWidth, scrolling) = properWidth(
                 itemCount: items.count,
                 size: geometry.size,
                 aspectRatio: aspectRatio,
                 minWidth: minWidth,
                 allRowsFilled: allRowsFilled
             )
-            
-            let itemWidth = geometry.size.width / CGFloat(columnCount)
-            
+                        
             let base = LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
                 ForEach(items) { item in
                     contentBuilder(item)
@@ -55,36 +53,40 @@ struct AspectVGrid<
         }
     }
     
-    /// - Returns: The first element of the tuple is the preferred column count;
+    /// - Returns: The first element of the tuple is the preferred width;
     /// The second, a bool, indicates if the curretn layout requires scrolling.
-    private func properColumnCount(
+    private func properWidth(
         itemCount: Int,
         size: CGSize,
         aspectRatio: CGFloat,
         minWidth: CGFloat = 0,
         allRowsFilled: Bool = false
-    ) -> (Int, Bool) {
+    ) -> (CGFloat, Bool) {
+        guard itemCount > 0 else { return (1, false) }
+
         let totalWidth = size.width
         let visibleHeight = size.height
-        
-        guard itemCount > 0 else { return (1, false) }
-        var columnCount = 0
-        
+        let maxColumns = max(Int((totalWidth / minWidth).rounded(.down)), 1)
+                
         var scrolling: Bool = false
         
-        repeat {
+        for columnCount in 1...maxColumns {
             let rowCount = (CGFloat(itemCount) / CGFloat(columnCount)).rounded(.up)
             let itemWidth = totalWidth / CGFloat(columnCount)
             let itemHeight = itemWidth / aspectRatio
             scrolling = rowCount * itemHeight > visibleHeight
             
             if !scrolling && (!allRowsFilled || itemCount % columnCount == 0) {
-                break
+                // A width that satisfy the minWidth and not scrolling
+                // is found, so we return the width and not scrolling.
+                return (itemWidth, false)
             }
-            columnCount += 1
-        } while columnCount < Int((totalWidth / minWidth).rounded(.down))
-                
-        return (columnCount, scrolling)
+        }
+        
+        // Since the for loop didn't yield any result, we can confirm that
+        // we should return the minWidth and revert to scrolling since
+        // minWidth has a higher priority.
+        return (minWidth, true)
     }
 }
 
