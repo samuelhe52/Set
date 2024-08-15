@@ -9,7 +9,7 @@ import Foundation
 
 struct SetGame {
     private(set) var deck: [SetCard]
-    private(set) var matchedCards: [SetCard] = []
+    private(set) var discardedCards: [SetCard] = []
     private(set) var cardsOnTable: [SetCard]
     
     var gameStatus: GameStatus {
@@ -55,7 +55,7 @@ struct SetGame {
     
     init() {
         self.deck = SetGame.createDeck()
-        self.matchedCards = []
+        self.discardedCards = []
         self.cardsOnTable = Array(deck.prefix(12))
         deck.removeSubrange(0..<12)
     }
@@ -80,7 +80,7 @@ struct SetGame {
                 if cardsOnTable.chosenCards.isValidSet {
                     print("Matched: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
                     
-                    matchedCards.append(contentsOf: cardsOnTable.chosenCards)
+                    discardedCards.append(contentsOf: cardsOnTable.chosenCards)
                     cardsOnTable.remove(atOffsets: cardsOnTable.chosenCardIndices)
                     dealThreeMoreCards()
                 } else {
@@ -104,8 +104,8 @@ struct SetGame {
     
     /// For debugging only!!!
     mutating func endGame() {
-        matchedCards.append(contentsOf: cardsOnTable)
-        matchedCards.append(contentsOf: deck)
+        discardedCards.append(contentsOf: cardsOnTable)
+        discardedCards.append(contentsOf: deck)
         cardsOnTable.removeAll()
         deck.removeAll()
     }

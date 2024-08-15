@@ -56,13 +56,13 @@ struct SetGameView: View {
             if setGameVM.gameStatus.gameEnded {
                 gameEndedScreen.transition(.opacityScale)
             } else {
-                matchedCardCount.transition(.opacityScale)
+                remainingCardCount.transition(.opacityScale)
             }
         }
     }
     
-    var matchedCardCount: some View {
-        Text("Matched: \(setGameVM.matchedCards.count) / 81")
+    var remainingCardCount: some View {
+        Text("Remaining: \(81 - setGameVM.discardedCards.count)")
             .font(.title3)
             .background {
                 RoundedRectangle(cornerRadius: 10)

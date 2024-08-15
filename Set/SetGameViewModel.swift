@@ -12,7 +12,7 @@ class SetGameViewModel: ObservableObject {
     @Published var hintCardIDs: Set<SetCard.ID>?
     
     var cards: [SetCard] { setGame.cardsOnTable }
-    var matchedCards: [SetCard] { setGame.matchedCards }
+    var discardedCards: [SetCard] { setGame.discardedCards }
     
     private var gameStartTime: Date = Date()
     private var gameEndTime: Date?
