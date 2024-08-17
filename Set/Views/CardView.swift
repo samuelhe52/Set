@@ -10,9 +10,11 @@ import SwiftUI
 /// Displays a certain Set game card with a rounded rectangle surrounding the shape(s).
 struct CardView: View {
     let card: SetCard
+    let covered: Bool
     
-    init(_ card: SetCard) {
+    init(_ card: SetCard, covered: Bool = false) {
         self.card = card
+        self.covered = covered
     }
     
     // Card properties
@@ -45,25 +47,32 @@ struct CardView: View {
     }
     
     var body: some View {
-        ProportionalRoundedRectangle(cornerFraction: 0.27)
-            .stroke(LinearGradient(gradient: baseColor.lighter.brightnessGradient,
-                                   startPoint: .topTrailing,
-                                   endPoint: .bottomLeading),
-                    lineWidth: 3.5)
-            .aspectRatio(5/7, contentMode: .fit)
-            .overlay(alignment: .center) {
-                VStack {
-                    ForEach(0..<shapeCount, id: \.self) { _ in
-                        cardShape
-                            .aspectRatio(5/3, contentMode: .fit)
-                            .foregroundStyle(LinearGradient(
-                                gradient: baseColor.lighter.brightnessGradient(contrast: 0.3),
-                                startPoint: .topTrailing,
-                                endPoint: .bottomLeading))
+        let gradient = LinearGradient(gradient: baseColor.lighter.brightnessGradient,
+                                                startPoint: .topTrailing,
+                                                endPoint: .bottomLeading)
+        if !covered {
+            ProportionalRoundedRectangle(cornerFraction: 0.27)
+                .stroke(gradient, lineWidth: 3.5)
+                .background(.background)
+                .aspectRatio(5/7, contentMode: .fit)
+                .overlay(alignment: .center) {
+                    VStack {
+                        ForEach(0..<shapeCount, id: \.self) { _ in
+                            cardShape
+                                .aspectRatio(5/3, contentMode: .fit)
+                                .foregroundStyle(LinearGradient(
+                                    gradient: baseColor.lighter.brightnessGradient(contrast: 0.3),
+                                    startPoint: .topTrailing,
+                                    endPoint: .bottomLeading))
+                        }
                     }
+                    .scaleEffect(CGSize(width: 0.65, height: 0.65), anchor: .center)
                 }
-                .scaleEffect(CGSize(width: 0.65, height: 0.65), anchor: .center)
-            }
+        } else {
+            ProportionalRoundedRectangle(cornerFraction: 0.27)
+                .fill(gradient)
+                .aspectRatio(5/7, contentMode: .fit)
+        }
     }
 }
 
