@@ -53,7 +53,7 @@ struct CardView: View {
         if !covered {
             ProportionalRoundedRectangle(cornerFraction: 0.27)
                 .stroke(gradient, lineWidth: 3.5)
-                .background(.background)
+                .background(in: ProportionalRoundedRectangle())
                 .aspectRatio(5/7, contentMode: .fit)
                 .overlay(alignment: .center) {
                     VStack {
