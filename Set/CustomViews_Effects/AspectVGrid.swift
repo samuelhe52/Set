@@ -57,7 +57,7 @@ struct AspectVGrid<
                 minWidth: minWidth,
                 allRowsFilled: allRowsFilled
             )
-                        
+            
             let base = LazyVGrid(columns: [GridItem(.adaptive(minimum: itemWidth), spacing: 0)], spacing: 0) {
                 ForEach(items) { item in
                     contentBuilder(item)
@@ -65,20 +65,14 @@ struct AspectVGrid<
                 }
             }
             
-            return Group {
+            if #available(iOS 16.0, *) {
+                ScrollView { base }
+                .scrollIndicators(.never)
+                .scrollDisabled(!scrolling)
+            } else {
                 if scrolling {
-                    if #available(iOS 16.0, *) {
-                        ScrollView {
-                            base
-                        }.scrollIndicators(.never)
-                    } else {
-                        ScrollView(showsIndicators: false) {
-                            base
-                        }
-                    }
-                } else {
-                    base
-                }
+                    ScrollView(showsIndicators: false) { base }
+                } else { base }
             }
         }
     }

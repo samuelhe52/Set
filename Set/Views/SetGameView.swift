@@ -56,6 +56,7 @@ struct SetGameView: View {
         }
     }
     
+    // MARK: cards
     var cards: some View {
         AspectVGrid(items: setGameVM.deck,
                     // Avoid animation hitches caused by
@@ -67,11 +68,11 @@ struct SetGameView: View {
                 createCard(card)
                     .matchedGeometryEffect(id: card.id, in: dealCardNamespace)
                     .matchedGeometryEffect(id: card.id, in: discardCardNameSpace)
-                    .contentShape(Rectangle()) // Ensure macOS users tap normally
                     .onTapGesture { toggleChosen(card) }
                     .padding(8)
             }
         }
+        .animation(dealAnimation, value: setGameVM.discardedCards)
         .onChange(of: setGameVM.deck.count) { _ in
             let allCardIDs = Set(setGameVM.deck.map { $0.id })
             dealtCardIDs = dealtCardIDs.intersection(allCardIDs)
@@ -103,13 +104,16 @@ struct SetGameView: View {
                          singleShakeDuration: Constants.Shake.singleShakeDuration)
     }
     
-    // MARK: - status
+    // MARK: - Status
     @ViewBuilder
     var statusWithCardPiles: some View {
         HStack {
             if !setGameVM.gameStatus.gameEnded {
                 discardPile
-                    .transition(.opacityScale)
+                    .transition(
+                        .opacity
+                        .animation(.smooth(duration: 0.4))
+                    )
                     .padding(.horizontal)
             }
             Group {
@@ -126,6 +130,7 @@ struct SetGameView: View {
                     .padding(.horizontal)
             }
         }
+        .animation(dealAnimation, value: discardedCards)
     }
     
     var remainingCardCount: some View {
@@ -206,20 +211,19 @@ struct SetGameView: View {
     @Namespace private var discardCardNameSpace
     
     private var discardedCards: [SetCard] {
-        withAnimation(.easeInOut(duration: 2)) {
-            setGameVM.discardedCards
-        }
+        setGameVM.discardedCards
     }
     
     var discardPile: some View {
         ZStack {
             ForEach(discardedCards) { card in
-                CardView(card, covered: true)
+                CardView(card)
                     .matchedGeometryEffect(id: card.id, in: discardCardNameSpace)
                     .frame(width: Constants.Deal.deckWidth,
                            height: Constants.Deal.deckWidth / Constants.Card.aspectRatio)
             }
         }
+        .animation(dealAnimation, value: setGameVM.discardedCards)
     }
 
     // MARK: - Bar at bottom
