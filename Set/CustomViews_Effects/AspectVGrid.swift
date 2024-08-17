@@ -12,15 +12,46 @@ struct AspectVGrid<
     ItemView: View
 >: View where Items.Element: Identifiable {
     var items: Items
+    var itemCount: Int
     var aspectRatio: CGFloat = 1
     var minWidth: CGFloat
     var allRowsFilled: Bool = false
     @ViewBuilder var contentBuilder: (Items.Element) -> ItemView
     
+    /// This initializer allows user to provide a custom `itemCount`
+    /// for a more customized layout calculation.
+    init(items: Items,
+         itemCount: Int,
+         aspectRatio: CGFloat = 1,
+         minWidth: CGFloat,
+         allRowsFilled: Bool = false,
+         @ViewBuilder contentBuilder: @escaping (Items.Element) -> ItemView) {
+        self.items = items
+        self.itemCount = itemCount
+        self.aspectRatio = aspectRatio
+        self.minWidth = minWidth
+        self.allRowsFilled = allRowsFilled
+        self.contentBuilder = contentBuilder
+    }
+    
+    init(items: Items,
+         aspectRatio: CGFloat = 1,
+         minWidth: CGFloat,
+         allRowsFilled: Bool = false,
+         @ViewBuilder contentBuilder: @escaping (Items.Element) -> ItemView) {
+        self.items = items
+        self.itemCount = items.count
+        self.aspectRatio = aspectRatio
+        self.minWidth = minWidth
+        self.allRowsFilled = allRowsFilled
+        self.contentBuilder = contentBuilder
+    }
+
+    
     var body: some View {
         GeometryReader { geometry in
             let (itemWidth, scrolling) = properWidth(
-                itemCount: items.count,
+                itemCount: itemCount,
                 size: geometry.size,
                 aspectRatio: aspectRatio,
                 minWidth: minWidth,
@@ -49,7 +80,6 @@ struct AspectVGrid<
                     base
                 }
             }
-            
         }
     }
     
@@ -67,7 +97,7 @@ struct AspectVGrid<
         let totalWidth = size.width
         let visibleHeight = size.height
         let maxColumns = max(Int((totalWidth / minWidth).rounded(.down)), 1)
-                        
+        
         for columnCount in 1...maxColumns {
             let rowCount = (CGFloat(itemCount) / CGFloat(columnCount)).rounded(.up)
             let itemWidth = totalWidth / CGFloat(columnCount)
