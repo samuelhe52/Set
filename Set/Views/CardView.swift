@@ -48,8 +48,8 @@ struct CardView: View {
     
     var body: some View {
         let gradient = LinearGradient(gradient: baseColor.lighter.brightnessGradient,
-                                                startPoint: .topTrailing,
-                                                endPoint: .bottomLeading)
+                                      startPoint: .topTrailing,
+                                      endPoint: .bottomLeading)
         if !covered {
             ProportionalRoundedRectangle(cornerFraction: 0.27)
                 .stroke(gradient, lineWidth: 3.5)

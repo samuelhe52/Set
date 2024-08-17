@@ -52,11 +52,10 @@ struct SetGameView: View {
     var cardsWithChoiceAppearance: some View {
         if !setGameVM.gameStatus.gameEnded {
             cards.transition(.opacityScale)
-            // Our transition must go here (inside if clause) for iOS 15 compatibility.
         }
     }
     
-    // MARK: cards
+    // MARK: Cards
     var cards: some View {
         AspectVGrid(items: setGameVM.deck,
                     // Avoid animation hitches caused by
@@ -73,7 +72,7 @@ struct SetGameView: View {
             }
         }
         .animation(dealAnimation, value: setGameVM.discardedCards)
-        .onChange(of: setGameVM.deck.count) { _ in
+        .onChange(of: setGameVM.deck.count) {
             let allCardIDs = Set(setGameVM.deck.map { $0.id })
             dealtCardIDs = dealtCardIDs.intersection(allCardIDs)
         }
@@ -234,7 +233,7 @@ struct SetGameView: View {
                 Spacer()
                 hint
                 /// For debugging only!!!
-                Button(action: { setGameVM.showEndScreen() }, label: { Text("End Game") })
+//                Button(action: { setGameVM.showEndScreen() }, label: { Text("End Game") })
                 /// For debugging only!!!
             }
         }

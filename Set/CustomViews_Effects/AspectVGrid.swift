@@ -65,15 +65,9 @@ struct AspectVGrid<
                 }
             }
             
-            if #available(iOS 16.0, *) {
-                ScrollView { base }
+            ScrollView { base }
                 .scrollIndicators(.never)
                 .scrollDisabled(!scrolling)
-            } else {
-                if scrolling {
-                    ScrollView(showsIndicators: false) { base }
-                } else { base }
-            }
         }
     }
     
