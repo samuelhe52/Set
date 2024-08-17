@@ -22,8 +22,8 @@ struct SetGameView: View {
         
         struct Shake {
             // The rotation angle used in the shake effect, divided by 10.
-            static let intensity: CGFloat = 0.7
-            static let singleShakeDuration: TimeInterval = 0.06
+            static let intensity: CGFloat = 0.9
+            static let singleShakeDuration: TimeInterval = 0.05
             static let duration: TimeInterval = 0.2
         }
         
@@ -130,7 +130,7 @@ struct SetGameView: View {
                     .padding(.horizontal)
             }
         }
-        .animation(dealAnimation, value: discardedCards)
+        .animation(dealAnimation, value: setGameVM.discardedCards)
     }
     
     var remainingCardCount: some View {
@@ -210,13 +210,9 @@ struct SetGameView: View {
     // MARK: - Discard pile
     @Namespace private var discardCardNameSpace
     
-    private var discardedCards: [SetCard] {
-        setGameVM.discardedCards
-    }
-    
     var discardPile: some View {
         ZStack {
-            ForEach(discardedCards) { card in
+            ForEach(setGameVM.discardedCards) { card in
                 CardView(card)
                     .matchedGeometryEffect(id: card.id, in: discardCardNameSpace)
                     .frame(width: Constants.Deal.deckWidth,
