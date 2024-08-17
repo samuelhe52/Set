@@ -32,6 +32,7 @@ struct SetGameView: View {
             static let duration: TimeInterval = 0.6
             static let delay: TimeInterval = 0.1
             static let waitTime: TimeInterval = 0.75
+            static let additionalDelay: TimeInterval = 0.75
         }
         
         static let initialCardCount: Int = 12
@@ -81,11 +82,16 @@ struct SetGameView: View {
     }
     
     private func toggleChosen(_ card: SetCard) {
-        let result = withAnimation(.smooth(duration: 0.3, extraBounce: 0.5)) {
+        let (matched, ids) = withAnimation(.smooth(duration: 0.3, extraBounce: 0.5)) {
             setGameVM.toggleChosen(card)
         }
-        if result.shouldShake {
-            startShaking(for: result.ids)
+        // ids is not nil, indicating that 3 cards are chosen
+        if !matched && ids != nil {
+            startShaking(for: ids)
+        }
+        // Only replenish the cards if there are less than 12 cards on screen
+        if matched && onScreenCardCount < 12 {
+            deal(delayed: true)
         }
     }
     
@@ -110,12 +116,10 @@ struct SetGameView: View {
         HStack {
             if !setGameVM.gameStatus.gameEnded {
                 discardPile
-                    .transition(
-                        .opacity
-                        .animation(.smooth(duration: 0.4))
-                    )
+                    .transition(.opacityScale)
                     .padding(.horizontal)
             }
+            Spacer()
             Group {
                 if setGameVM.gameStatus.gameEnded {
                     gameEndedScreen.transition(.opacityScale)
@@ -124,6 +128,7 @@ struct SetGameView: View {
                 }
             }
             .padding(.horizontal)
+            Spacer()
             if !setGameVM.gameStatus.gameEnded {
                 deck
                     .transition(.opacityScale)
@@ -185,20 +190,26 @@ struct SetGameView: View {
         dealtCardIDs.contains(card.id)
     }
     
+    private var onScreenCardCount: Int {
+        dealtCardIDs.intersection(Set(setGameVM.deck.map { $0.id })).count
+    }
+    
     private var undealtCards: [SetCard] { setGameVM.deck.filter { !isDealt($0) } }
     
     private let dealAnimation: Animation = .spring(duration: Constants.Deal.duration)
     
-    private func deal() {
+    private func deal(delayed: Bool = false) {
         if dealtCardIDs.count == 0 {
             dealCards(count: Constants.initialCardCount)
         } else {
-            dealCards(count: Constants.cardsPerDeal)
+            dealCards(count: Constants.cardsPerDeal,
+                      withAdditionalDelay: delayed ? Constants.Deal.additionalDelay : 0)
         }
     }
     
-    private func dealCards(count: Int) {
-        var delay: TimeInterval = 0
+    private func dealCards(count: Int,
+                           withAdditionalDelay addDelay: TimeInterval = 0) {
+        var delay: TimeInterval = 0 + addDelay
         for card in undealtCards.prefix(count) {
             withAnimation(dealAnimation.delay(delay)) {
                 _ = dealtCardIDs.insert(card.id)

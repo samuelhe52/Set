@@ -44,8 +44,9 @@ struct SetGame {
     }
     
     // MARK: - Game logic
-    /// - Returns: The IDs of cards that failed to form a set, if any.
-    mutating func toggleChosen(_ card: SetCard) -> (shouldShake: Bool, ids: Set<SetCard.ID>?) {
+    /// - Returns: Wether chosen cards form a set, and
+    /// the IDs of cards chosen if there are three cards chosen
+    mutating func toggleChosen(_ card: SetCard) -> (matched: Bool, ids: Set<SetCard.ID>?) {
         guard let chosenCardIndex = deck.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in cardsOnTable!")
             return (false, nil)
@@ -54,6 +55,7 @@ struct SetGame {
         if deck.chosenCardCount < 3 ||
             deck.chosenCards.contains(deck[chosenCardIndex]) {
             deck[chosenCardIndex].isChosen.toggle()
+            let chosenCardsThisSession = deck.chosenCards
             if deck.chosenCardCount == 3 {
                 defer {
                     deck.chosenCardIndices.forEach { index in
@@ -61,16 +63,20 @@ struct SetGame {
                     }
                 }
                 
-                if deck.chosenCards.isValidSet {
-                    print("Matched: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    discardedCards.insert(contentsOf: deck.chosenCards, at: 0)
+                // Only return the ids if three cards are chosen
+                if chosenCardsThisSession.isValidSet {
+                    print("Matched: \(chosenCardsThisSession.map({ $0.description }).joined(separator: " "))")
+                    discardedCards.insert(contentsOf: chosenCardsThisSession, at: 0)
                     deck.remove(atOffsets: deck.chosenCardIndices)
+                    return (true, Set(chosenCardsThisSession.map { $0.id }))
                 } else {
-                    print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    return (true, Set(deck.chosenCards.map { $0.id }))
+                    print("Match failed: \(chosenCardsThisSession.map({ $0.description }).joined(separator: " "))")
+                    return (false, Set(chosenCardsThisSession.map { $0.id }))
                 }
+            } else {
+                // not three cards chosen
+                return (false, nil)
             }
-            return (false, nil)
         } else {
             print("No more than 3 cards can be chosen.")
             return (false, nil)

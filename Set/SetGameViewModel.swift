@@ -27,8 +27,9 @@ class SetGameViewModel: ObservableObject {
     
     // MARK: - Intent
     
-    /// - Returns: The IDs of cards that failed to form a set, if any.
-    func toggleChosen(_ card: SetCard) -> (shouldShake: Bool, ids: Set<SetCard.ID>?) {
+    /// - Returns: Wether chosen cards form a set, and
+    /// the IDs of cards chosen if there are three cards chosen
+    func toggleChosen(_ card: SetCard) -> (matched: Bool, ids: Set<SetCard.ID>?) {
         return setGame.toggleChosen(card)
     }
     
