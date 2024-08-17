@@ -8,18 +8,18 @@
 import Foundation
 
 struct SetGame {
-    private(set) var deck: [SetCard]
+    private(set) var deck: [SetCard] = createDeck()
     private(set) var discardedCards: [SetCard] = []
-    private(set) var cardsOnTable: [SetCard]
     
+    // MARK: - Game status
     var gameStatus: (gameEnded: Bool, endReason: GameEndReason?) {
-        if deck.isEmpty && cardsOnTable.isEmpty {
+        if deck.isEmpty {
             return (true, endReason: .allCardsMatched)
         /// It has been mathematically proven that the maximum number of
         /// cards in a group in which no set exists is 20, so we use it as a
         /// threshold to avoid unnecassary computation.
-        } else if (cardsOnTable.count + deck.count) <= 20 {
-            if SetGame.findSet(in: (cardsOnTable + deck)) == nil {
+        } else if deck.count <= 20 {
+            if SetGame.findSet(in: deck) == nil {
                 return (gameEnded: true, endReason: .noSetFound)
             } else {
                 return (gameEnded: false, endReason: .none)
@@ -43,39 +43,31 @@ struct SetGame {
         }
     }
     
-    init() {
-        self.deck = SetGame.createDeck()
-        self.discardedCards = []
-        self.cardsOnTable = Array(deck.prefix(12))
-        deck.removeSubrange(0..<12)
-    }
-    
+    // MARK: - Game logic
     /// - Returns: The IDs of cards that failed to form a set, if any.
     mutating func toggleChosen(_ card: SetCard) -> (shouldShake: Bool, ids: Set<SetCard.ID>?) {
-        guard let chosenCardIndex = cardsOnTable.firstIndex(where: { $0.id == card.id }) else {
+        guard let chosenCardIndex = deck.firstIndex(where: { $0.id == card.id }) else {
             print("No such card in cardsOnTable!")
             return (false, nil)
         }
                 
-        if cardsOnTable.chosenCardCount < 3 ||
-            cardsOnTable.chosenCards.contains(cardsOnTable[chosenCardIndex]) {
-            cardsOnTable[chosenCardIndex].isChosen.toggle()
-            if cardsOnTable.chosenCardCount == 3 {
+        if deck.chosenCardCount < 3 ||
+            deck.chosenCards.contains(deck[chosenCardIndex]) {
+            deck[chosenCardIndex].isChosen.toggle()
+            if deck.chosenCardCount == 3 {
                 defer {
-                    cardsOnTable.chosenCardIndices.forEach { index in
-                        cardsOnTable[index].isChosen = false
+                    deck.chosenCardIndices.forEach { index in
+                        deck[index].isChosen = false
                     }
                 }
                 
-                if cardsOnTable.chosenCards.isValidSet {
-                    print("Matched: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    
-                    discardedCards.append(contentsOf: cardsOnTable.chosenCards)
-                    cardsOnTable.remove(atOffsets: cardsOnTable.chosenCardIndices)
-                    dealThreeMoreCards()
+                if deck.chosenCards.isValidSet {
+                    print("Matched: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
+                    discardedCards.insert(contentsOf: deck.chosenCards, at: 0)
+                    deck.remove(atOffsets: deck.chosenCardIndices)
                 } else {
-                    print("Match failed: \(cardsOnTable.chosenCards.map({ $0.description }).joined(separator: " "))")
-                    return (true, Set(cardsOnTable.chosenCards.map { $0.id }))
+                    print("Match failed: \(deck.chosenCards.map({ $0.description }).joined(separator: " "))")
+                    return (true, Set(deck.chosenCards.map { $0.id }))
                 }
             }
             return (false, nil)
@@ -85,18 +77,9 @@ struct SetGame {
         }
     }
     
-    mutating func dealThreeMoreCards() {
-        cardsOnTable.append(contentsOf: deck.prefix(3))
-        if deck.count >= 3 {
-            deck.removeSubrange(0..<3)
-        }
-    }
-    
     /// For debugging only!!!
     mutating func endGame() {
-        discardedCards.append(contentsOf: cardsOnTable)
         discardedCards.append(contentsOf: deck)
-        cardsOnTable.removeAll()
         deck.removeAll()
     }
     /// For debugging only!!!

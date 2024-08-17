@@ -9,9 +9,8 @@ import Foundation
 
 class SetGameViewModel: ObservableObject {
     @Published private var setGame = SetGame()
-    @Published var hintCardIDs: Set<SetCard.ID>?
     
-    var cards: [SetCard] { setGame.cardsOnTable }
+    var deck: [SetCard] { setGame.deck }
     var discardedCards: [SetCard] { setGame.discardedCards }
     
     private var gameStartTime: Date = Date()
@@ -26,15 +25,6 @@ class SetGameViewModel: ObservableObject {
         return (setGame.gameStatus.gameEnded, duration, setGame.gameStatus.endReason)
     }
     
-    var hintShown: Bool {
-        !Set(cards.map { $0.id })
-            .intersection(hintCardIDs ?? [])
-            .isEmpty
-    }
-        
-    private var maxVisibleCardCount: Int { setGame.deck.count }
-    var canDealMoreCards: Bool { !setGame.deck.isEmpty }
-    
     // MARK: - Intent
     
     /// - Returns: The IDs of cards that failed to form a set, if any.
@@ -46,21 +36,6 @@ class SetGameViewModel: ObservableObject {
         setGame = SetGame()
         gameStartTime = Date()
         gameEndTime = nil
-    }
-    
-    func dealThreeMoreCards() {
-        setGame.dealThreeMoreCards()
-    }
-    
-    ///  - Returns: Returns `false` if there is no valid set on screen, otherwise returns `true`.
-    ///  - Adds IDs of the cards that form a set into `hintCardIDs`, if any.
-    func giveHint() -> Bool {
-        if let validSetCardIDs = SetGame.findSet(in: cards) {
-            hintCardIDs = validSetCardIDs
-            return true
-        } else {
-            return false
-        }
     }
     
     /// For debugging only!!!
