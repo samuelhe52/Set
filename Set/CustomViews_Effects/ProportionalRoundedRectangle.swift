@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProportionalRoundedRectangle: Shape {
-    let cornerFraction: CGFloat
+    var cornerFraction: CGFloat = 0.27
 
     func path(in rect: CGRect) -> Path {
         let minSize = min(rect.width, rect.height)
