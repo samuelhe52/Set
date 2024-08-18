@@ -113,7 +113,8 @@ struct SetGameView: View {
     @ViewBuilder
     var statusWithCardPiles: some View {
         HStack {
-            if !setGameVM.gameStatus.gameEnded {
+            if !setGameVM.gameStatus.gameEnded &&
+                setGameVM.discardedCards.count != 0 {
                 discardPile
                     .transition(.opacityScale)
                     .padding(.horizontal)
@@ -175,8 +176,11 @@ struct SetGameView: View {
                 }
             .overlay(alignment: .center) { Text("Deal") }
         }
-        .onAppear { Timer.scheduledTimer(withTimeInterval: Constants.Deal.waitTime,
-                                         repeats: false) { _ in deal() } }
+        .onAppear {
+            // Dealing must be delayed here to prevent animation glitches
+            Timer.scheduledTimer(withTimeInterval: Constants.Deal.waitTime,
+                                 repeats: false) { _ in deal() }
+        }
         .onTapGesture { deal() }
         .frame(width: Constants.Deal.deckWidth,
                height: Constants.Deal.deckWidth / Constants.Card.aspectRatio)
@@ -223,13 +227,12 @@ struct SetGameView: View {
     var discardPile: some View {
         ZStack {
             ForEach(setGameVM.discardedCards) { card in
-                CardView(card)
+                CardView(card, covered: true)
                     .matchedGeometryEffect(id: card.id, in: discardCardNameSpace)
                     .frame(width: Constants.Deal.deckWidth,
                            height: Constants.Deal.deckWidth / Constants.Card.aspectRatio)
             }
         }
-        .animation(dealAnimation, value: setGameVM.discardedCards)
     }
 
     // MARK: - Bar at bottom
@@ -238,7 +241,7 @@ struct SetGameView: View {
             newGame
             if !setGameVM.gameStatus.gameEnded {
                 Spacer()
-                hint
+                hint.transition(.opacityScale)
                 /// For debugging only!!!
 //                Button(action: { setGameVM.showEndScreen() }, label: { Text("End Game") })
                 /// For debugging only!!!
