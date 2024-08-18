@@ -48,10 +48,13 @@ struct CardView: View {
     
     var body: some View {
         let gradient = LinearGradient(gradient: baseColor.lighter.brightnessGradient,
-                                                startPoint: .topTrailing,
-                                                endPoint: .bottomLeading)
-        if !covered {
-            ProportionalRoundedRectangle(cornerFraction: 0.27)
+                                      startPoint: .topTrailing,
+                                      endPoint: .bottomLeading)
+        
+        let base = ProportionalRoundedRectangle(cornerFraction: 0.27)
+        
+        ZStack {
+            base
                 .stroke(gradient, lineWidth: 3.5)
                 .background(in: ProportionalRoundedRectangle())
                 .aspectRatio(5/7, contentMode: .fit)
@@ -68,11 +71,14 @@ struct CardView: View {
                     }
                     .scaleEffect(CGSize(width: 0.65, height: 0.65), anchor: .center)
                 }
-        } else {
-            ProportionalRoundedRectangle(cornerFraction: 0.27)
+            base
                 .fill(gradient)
                 .aspectRatio(5/7, contentMode: .fit)
+                .opacity(covered ? 1 : 0)
         }
+        #if os(macOS)
+        .contentShape(base)
+        #endif
     }
 }
 
